@@ -129,16 +129,23 @@ export default function HomeLogado({ utilizador }) {
                 ) : (
                   <>
                     <Link
-                      to="/imoveis"
+                      to="/descobrir"
                       className="btn btn-lg fw-bold"
                       style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px" }}
                     >
-                      🔍 Explorar imóveis
+                      ✨ Descobrir imóveis
+                    </Link>
+                    <Link
+                      to="/imoveis"
+                      className="btn btn-lg fw-semibold"
+                      style={{ background: "rgba(255,255,255,0.08)", color: "#fff", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}
+                    >
+                      🔍 Explorar lista
                     </Link>
                     <Link
                       to="/favoritos"
                       className="btn btn-lg fw-semibold"
-                      style={{ background: "rgba(255,255,255,0.08)", color: "#fff", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}
+                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.1)" }}
                     >
                       ♥ Favoritos
                     </Link>

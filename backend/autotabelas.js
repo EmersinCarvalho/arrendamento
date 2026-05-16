@@ -65,6 +65,28 @@ async function criarTabelas() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `,
     },
+    {
+      nome: "perfil_procura",
+      sql: `
+        CREATE TABLE IF NOT EXISTS perfil_procura (
+          id                   INT AUTO_INCREMENT PRIMARY KEY,
+          utilizador_id        INT          NOT NULL UNIQUE,
+          objetivo             ENUM('arrendar','comprar') NOT NULL DEFAULT 'arrendar',
+          tipo_imovel          VARCHAR(50)  NULL,
+          cidade               VARCHAR(100) NULL,
+          tipologia            VARCHAR(10)  NULL,
+          preco_max            DECIMAL(10,2) NOT NULL DEFAULT 2000,
+          quartos_min          INT          NOT NULL DEFAULT 0,
+          aceita_pets          TINYINT(1)   NOT NULL DEFAULT 0,
+          mobiliado            TINYINT(1)   NOT NULL DEFAULT 0,
+          despesas_incluidas   TINYINT(1)   NOT NULL DEFAULT 0,
+          prioridades          JSON         NULL,
+          criado_em            TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+          atualizado_em        TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `,
+    },
   ];
 
   console.log("🔧 A verificar/criar tabelas...");
@@ -90,6 +112,30 @@ async function criarTabelas() {
     {
       descricao: "password nullable em utilizadores",
       sql: "ALTER TABLE utilizadores MODIFY COLUMN password VARCHAR(255) NULL",
+    },
+    {
+      descricao: "quartos em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN quartos INT NOT NULL DEFAULT 0 AFTER tipologia",
+    },
+    {
+      descricao: "tipo_imovel em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN tipo_imovel VARCHAR(50) NULL AFTER quartos",
+    },
+    {
+      descricao: "aceita_pets em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN aceita_pets TINYINT(1) NOT NULL DEFAULT 0 AFTER tipo_imovel",
+    },
+    {
+      descricao: "mobiliado em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN mobiliado TINYINT(1) NOT NULL DEFAULT 0 AFTER aceita_pets",
+    },
+    {
+      descricao: "despesas_incluidas em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN despesas_incluidas TINYINT(1) NOT NULL DEFAULT 0 AFTER mobiliado",
+    },
+    {
+      descricao: "verificado em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN verificado TINYINT(1) NOT NULL DEFAULT 0 AFTER despesas_incluidas",
     },
   ];
 

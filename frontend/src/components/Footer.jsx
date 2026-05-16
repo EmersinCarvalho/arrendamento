@@ -1,12 +1,18 @@
+import logo from "../assets/logo.png";
+
 export default function Footer() {
   return (
     <footer className="text-white mt-auto py-5" style={{ background: "#1a1a1a" }}>
       <div className="container">
         <div className="row g-4 mb-4">
           <div className="col-12 col-md-4">
-            <p className="fw-bold fs-5 mb-2 footer-brand">
-              <span className="brand-arren">Arrenda</span><span className="text-white">House</span>
-            </p>
+            <div className="mb-3">
+              <img
+                src={logo}
+                alt="ArrendaHouse"
+                style={{ height: 48, borderRadius: 8, objectFit: "contain" }}
+              />
+            </div>
             <p className="text-muted small mb-0">
               A plataforma portuguesa de arrendamento imobiliário. Simples, rápida e de confiança.
             </p>

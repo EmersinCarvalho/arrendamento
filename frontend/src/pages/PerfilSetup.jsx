@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setToken, getToken } from "../services/auth";
+import logo from "../assets/logo.png";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -42,6 +43,7 @@ export default function PerfilSetup() {
     >
       <div style={{ maxWidth: 600, width: "100%", padding: "0 1rem" }}>
         <div className="text-center mb-5">
+          <img src={logo} alt="ArrendaHouse" style={{ height: 72, objectFit: "contain", marginBottom: "1rem", borderRadius: 8 }} />
           <h2 className="fw-bold text-white mb-2">
             Bem-vindo à{" "}
             <span style={{ color: "#FFC300" }}>ArrendaHouse</span>!

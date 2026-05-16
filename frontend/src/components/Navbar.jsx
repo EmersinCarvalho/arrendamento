@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getUtilizador, logout } from "../services/auth";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const { pathname } = useLocation();
@@ -14,8 +15,12 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top shadow" style={{ background: "#1a1a1a" }}>
       <div className="container">
-        <Link className="navbar-brand fw-bold fs-4 navbar-brand-logo" to="/">
-          <span className="brand-arren">Arrenda</span><span className="brand-house">House</span>
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <img
+            src={logo}
+            alt="ArrendaHouse"
+            style={{ height: 38, borderRadius: 7, objectFit: "contain" }}
+          />
         </Link>
 
         <button
@@ -94,6 +99,26 @@ export default function Navbar() {
                       {utilizador.email}
                     </span>
                   </li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li>
+                    <Link className="dropdown-item fw-semibold" to="/perfil">
+                      ⚙️ O meu perfil
+                    </Link>
+                  </li>
+                  {utilizador.perfil === "inquilino" && (
+                    <li>
+                      <Link className="dropdown-item" to="/setup-procura">
+                        🔍 Preferências de procura
+                      </Link>
+                    </li>
+                  )}
+                  {utilizador.perfil === "inquilino" && (
+                    <li>
+                      <Link className="dropdown-item" to="/descobrir">
+                        ✨ Descobrir imóveis
+                      </Link>
+                    </li>
+                  )}
                   <li><hr className="dropdown-divider" /></li>
                   <li>
                     <button className="dropdown-item text-danger fw-semibold" onClick={handleLogout}>

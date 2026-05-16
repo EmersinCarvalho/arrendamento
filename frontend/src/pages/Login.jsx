@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -15,6 +16,7 @@ export default function Login() {
         {!perfil && (
           <>
             <div className="text-center mb-5">
+              <img src={logo} alt="ArrendaHouse" style={{ height: 80, objectFit: "contain", marginBottom: "1.2rem" }} />
               <h1 className="fw-bold mb-2" style={{ fontSize: "2.2rem" }}>
                 Bem-vindo ao <span style={{ color: "#FFC300" }}>ArrendaHouse</span>
               </h1>

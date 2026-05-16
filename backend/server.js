@@ -7,6 +7,7 @@ const passport = require("./config/passport");
 const criarTabelas = require("./autotabelas");
 const imoveisRoutes = require("./routes/imoveis");
 const authRoutes = require("./routes/auth");
+const procuraRoutes = require("./routes/procura");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use(passport.session());
 // Rotas
 app.use("/api/imoveis", imoveisRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/procura", procuraRoutes);
 
 // Rota raiz de verificação
 app.get("/", (req, res) => {

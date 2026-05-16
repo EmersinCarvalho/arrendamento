@@ -8,6 +8,9 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "./pages/AuthCallback";
 import PerfilSetup from "./pages/PerfilSetup";
+import SetupProcura from "./pages/SetupProcura";
+import SwipeImoveis from "./pages/SwipeImoveis";
+import Perfil from "./pages/Perfil";
 
 export default function App() {
   return (
@@ -22,6 +25,9 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/perfil/setup" element={<PerfilSetup />} />
+            <Route path="/setup-procura" element={<SetupProcura />} />
+            <Route path="/descobrir" element={<SwipeImoveis />} />
+            <Route path="/perfil" element={<Perfil />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
