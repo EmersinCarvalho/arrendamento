@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
-import { getImoveis } from "../services/api";
+import { getImoveis, getFavoritos, adicionarFavorito, removerFavorito } from "../services/api";
+import { getUtilizador } from "../services/auth";
 
 const TIPOLOGIAS = ["T0", "T1", "T2", "T3", "T4"];
 const CIDADES = ["Lisboa", "Porto", "Braga", "Coimbra", "Faro", "Cascais"];
 
 export default function Imoveis() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const utilizador = getUtilizador();
+
   const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
+  const [favoritoIds, setFavoritoIds] = useState(new Set());
 
   const cidadeFiltro = searchParams.get("cidade") || "";
   const tipologiaFiltro = searchParams.get("tipologia") || "";
@@ -24,6 +29,37 @@ export default function Imoveis() {
       .catch(() => setErro("Não foi possível carregar os imóveis."))
       .finally(() => setLoading(false));
   }, [cidadeFiltro, tipologiaFiltro]);
+
+  // Carregar favoritos se autenticado
+  useEffect(() => {
+    if (!utilizador) return;
+    getFavoritos().then((ids) => setFavoritoIds(new Set(ids))).catch(() => {});
+  }, []);
+
+  async function handleToggleFavorito(imovelId) {
+    if (!utilizador) { navigate("/login"); return; }
+    const estaFavorito = favoritoIds.has(imovelId);
+    // Atualização otimista
+    setFavoritoIds((prev) => {
+      const next = new Set(prev);
+      estaFavorito ? next.delete(imovelId) : next.add(imovelId);
+      return next;
+    });
+    try {
+      if (estaFavorito) {
+        await removerFavorito(imovelId);
+      } else {
+        await adicionarFavorito(imovelId);
+      }
+    } catch {
+      // Reverter em caso de erro
+      setFavoritoIds((prev) => {
+        const next = new Set(prev);
+        estaFavorito ? next.add(imovelId) : next.delete(imovelId);
+        return next;
+      });
+    }
+  }
 
   function setFiltro(key, value) {
     const params = new URLSearchParams(searchParams);
@@ -115,7 +151,11 @@ export default function Imoveis() {
         <div className="row g-4">
           {imoveis.map((imovel) => (
             <div key={imovel.id} className="col-12 col-md-6 col-lg-4">
-              <ImovelCard imovel={imovel} />
+              <ImovelCard
+                imovel={imovel}
+                favorito={favoritoIds.has(imovel.id)}
+                onToggleFavorito={handleToggleFavorito}
+              />
             </div>
           ))}
         </div>

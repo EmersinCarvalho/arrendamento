@@ -1,11 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getUtilizador, logout } from "../services/auth";
+import { useTema } from "../context/ThemeContext";
 import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const utilizador = getUtilizador();
+  const { darkMode, setDarkMode } = useTema();
 
   function handleLogout() {
     logout();
@@ -56,6 +58,26 @@ export default function Navbar() {
           </ul>
 
           <div className="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+            {/* Botão modo noturno */}
+            <button
+              onClick={() => setDarkMode((d) => !d)}
+              className="btn btn-sm"
+              title={darkMode ? "Mudar para modo claro" : "Mudar para modo noturno"}
+              style={{
+                background: darkMode ? "rgba(255,195,0,0.15)" : "rgba(255,255,255,0.1)",
+                border: "none",
+                borderRadius: "50%",
+                width: 36,
+                height: 36,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.1rem",
+                transition: "background 0.2s",
+              }}
+            >
+              {darkMode ? "☀️" : "🌙"}
+            </button>
             {utilizador ? (
               // Utilizador autenticado
               <div className="dropdown">
@@ -105,6 +127,11 @@ export default function Navbar() {
                       ⚙️ O meu perfil
                     </Link>
                   </li>
+                  <li>
+                    <Link className="dropdown-item" to="/favoritos">
+                      ❤️ Favoritos
+                    </Link>
+                  </li>
                   {utilizador.perfil === "inquilino" && (
                     <li>
                       <Link className="dropdown-item" to="/setup-procura">
@@ -116,6 +143,20 @@ export default function Navbar() {
                     <li>
                       <Link className="dropdown-item" to="/descobrir">
                         ✨ Descobrir imóveis
+                      </Link>
+                    </li>
+                  )}
+                  {utilizador.perfil === "senhorio" && (
+                    <li>
+                      <Link className="dropdown-item" to="/meus-imoveis">
+                        🏠 Os meus imóveis
+                      </Link>
+                    </li>
+                  )}
+                  {utilizador.perfil === "senhorio" && (
+                    <li>
+                      <Link className="dropdown-item fw-semibold" to="/imoveis/publicar" style={{ color: "#b8860b" }}>
+                        + Publicar imóvel
                       </Link>
                     </li>
                   )}

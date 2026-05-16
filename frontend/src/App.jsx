@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -11,9 +12,14 @@ import PerfilSetup from "./pages/PerfilSetup";
 import SetupProcura from "./pages/SetupProcura";
 import SwipeImoveis from "./pages/SwipeImoveis";
 import Perfil from "./pages/Perfil";
+import PublicarImovel from "./pages/PublicarImovel";
+import MeusImoveis from "./pages/MeusImoveis";
+import Favoritos from "./pages/Favoritos";
+import PerfilAnunciante from "./pages/PerfilAnunciante";
 
 export default function App() {
   return (
+    <ThemeProvider>
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
         <Navbar />
@@ -21,7 +27,13 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/imoveis" element={<Imoveis />} />
+            {/* /imoveis/publicar deve vir ANTES de /imoveis/:id */}
+            <Route path="/imoveis/publicar" element={<PublicarImovel />} />
             <Route path="/imoveis/:id" element={<DetalheImovel />} />
+            <Route path="/editar-imovel/:id" element={<PublicarImovel />} />
+            <Route path="/meus-imoveis" element={<MeusImoveis />} />
+            <Route path="/favoritos" element={<Favoritos />} />
+            <Route path="/anunciante/:id" element={<PerfilAnunciante />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/perfil/setup" element={<PerfilSetup />} />
@@ -34,8 +46,10 @@ export default function App() {
         <Footer />
       </div>
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
+
 
 
 

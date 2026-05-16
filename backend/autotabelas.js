@@ -66,6 +66,22 @@ async function criarTabelas() {
       `,
     },
     {
+      nome: "avaliacoes",
+      sql: `
+        CREATE TABLE IF NOT EXISTS avaliacoes (
+          id            INT AUTO_INCREMENT PRIMARY KEY,
+          avaliador_id  INT NOT NULL,
+          avaliado_id   INT NOT NULL,
+          estrelas      TINYINT NOT NULL,
+          comentario    TEXT NULL,
+          criado_em     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_avaliacao (avaliador_id, avaliado_id),
+          FOREIGN KEY (avaliador_id) REFERENCES utilizadores(id) ON DELETE CASCADE,
+          FOREIGN KEY (avaliado_id)  REFERENCES utilizadores(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `,
+    },
+    {
       nome: "perfil_procura",
       sql: `
         CREATE TABLE IF NOT EXISTS perfil_procura (
@@ -136,6 +152,70 @@ async function criarTabelas() {
     {
       descricao: "verificado em imoveis",
       sql: "ALTER TABLE imoveis ADD COLUMN verificado TINYINT(1) NOT NULL DEFAULT 0 AFTER despesas_incluidas",
+    },
+    {
+      descricao: "area em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN area INT NULL AFTER verificado",
+    },
+    {
+      descricao: "casas_banho em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN casas_banho INT NULL DEFAULT 1 AFTER area",
+    },
+    {
+      descricao: "varanda em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN varanda TINYINT(1) NOT NULL DEFAULT 0 AFTER casas_banho",
+    },
+    {
+      descricao: "garagem em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN garagem TINYINT(1) NOT NULL DEFAULT 0 AFTER varanda",
+    },
+    {
+      descricao: "estado em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN estado VARCHAR(50) NULL AFTER garagem",
+    },
+    {
+      descricao: "armarios_embutidos em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN armarios_embutidos TINYINT(1) NOT NULL DEFAULT 0 AFTER estado",
+    },
+    {
+      descricao: "orientacao em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN orientacao VARCHAR(100) NULL AFTER armarios_embutidos",
+    },
+    {
+      descricao: "cozinha_equipada em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN cozinha_equipada TINYINT(1) NOT NULL DEFAULT 0 AFTER orientacao",
+    },
+    {
+      descricao: "aquecimento em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN aquecimento VARCHAR(50) NULL AFTER cozinha_equipada",
+    },
+    {
+      descricao: "tipo_edificio em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN tipo_edificio VARCHAR(50) NULL AFTER aquecimento",
+    },
+    {
+      descricao: "andar em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN andar VARCHAR(30) NULL AFTER tipo_edificio",
+    },
+    {
+      descricao: "elevador em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN elevador TINYINT(1) NOT NULL DEFAULT 0 AFTER andar",
+    },
+    {
+      descricao: "certificado_energetico em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN certificado_energetico VARCHAR(5) NULL AFTER elevador",
+    },
+    {
+      descricao: "atualizado_em em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER certificado_energetico",
+    },
+    {
+      descricao: "meses_caucao em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN meses_caucao INT NULL AFTER atualizado_em",
+    },
+    {
+      descricao: "fianca em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN fianca TINYINT(1) NOT NULL DEFAULT 0 AFTER meses_caucao",
     },
   ];
 

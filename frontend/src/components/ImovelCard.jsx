@@ -1,14 +1,34 @@
 import { Link } from "react-router-dom";
 
-export default function ImovelCard({ imovel }) {
+export default function ImovelCard({ imovel, favorito = false, onToggleFavorito }) {
   return (
     <div className="card h-100 shadow-sm border-0 imovel-card">
-      <div className="card-img-wrapper overflow-hidden" style={{ height: "210px" }}>
+      <div className="card-img-wrapper overflow-hidden" style={{ height: "210px", position: "relative" }}>
         <img
           src={imovel.foto}
           alt={imovel.titulo}
           className="card-img-top w-100 h-100 object-fit-cover"
         />
+        {/* Botão favorito */}
+        <button
+          onClick={(e) => { e.preventDefault(); onToggleFavorito && onToggleFavorito(imovel.id); }}
+          title={favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          style={{
+            position: "absolute", top: 10, right: 10,
+            background: "rgba(255,255,255,0.92)",
+            border: "none", borderRadius: "50%",
+            width: 38, height: 38,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+            fontSize: "1.2rem",
+            transition: "transform 0.15s",
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.15)"}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+        >
+          {favorito ? "❤️" : "🤍"}
+        </button>
       </div>
 
       <div className="card-body d-flex flex-column">

@@ -1,5 +1,16 @@
 const API_URL = "http://localhost:5000/api";
 
+function getToken() {
+  return localStorage.getItem("ah_token");
+}
+
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${getToken()}`,
+  };
+}
+
 export async function getImoveis(filtros = {}) {
   const params = new URLSearchParams();
   if (filtros.cidade) params.append("cidade", filtros.cidade);
@@ -14,4 +25,93 @@ export async function getImovelById(id) {
   const response = await fetch(`${API_URL}/imoveis/${id}`);
   if (!response.ok) throw new Error("Imóvel não encontrado");
   return response.json();
+}
+
+export async function getMeusImoveis() {
+  const response = await fetch(`${API_URL}/imoveis/meus`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) throw new Error("Erro ao carregar os seus imóveis");
+  return response.json();
+}
+
+export async function criarImovel(dados) {
+  const response = await fetch(`${API_URL}/imoveis`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(dados),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao publicar imóvel");
+  return json;
+}
+
+export async function atualizarImovel(id, dados) {
+  const response = await fetch(`${API_URL}/imoveis/${id}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(dados),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao atualizar imóvel");
+  return json;
+}
+
+export async function eliminarImovel(id) {
+  const response = await fetch(`${API_URL}/imoveis/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao eliminar imóvel");
+  return json;
+}
+
+// ── Favoritos ──────────────────────────────────────────────────────
+export async function getFavoritos() {
+  const response = await fetch(`${API_URL}/favoritos`, { headers: authHeaders() });
+  if (!response.ok) return [];
+  return response.json();
+}
+
+export async function getFavoritosImoveis() {
+  const response = await fetch(`${API_URL}/favoritos/imoveis`, { headers: authHeaders() });
+  if (!response.ok) return [];
+  return response.json();
+}
+
+export async function adicionarFavorito(imovelId) {
+  await fetch(`${API_URL}/favoritos/${imovelId}`, { method: "POST", headers: authHeaders() });
+}
+
+export async function removerFavorito(imovelId) {
+  await fetch(`${API_URL}/favoritos/${imovelId}`, { method: "DELETE", headers: authHeaders() });
+}
+
+// ── Avaliações ──────────────────────────────────────────────────────
+export async function getAvaliacoesAnunciante(utilizadorId) {
+  const response = await fetch(`${API_URL}/avaliacoes/utilizador/${utilizadorId}`);
+  if (!response.ok) throw new Error("Erro ao carregar avaliações");
+  return response.json();
+}
+
+export async function submeterAvaliacao(utilizadorId, dados) {
+  const response = await fetch(`${API_URL}/avaliacoes/utilizador/${utilizadorId}`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(dados),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao submeter avaliação");
+  return json;
+}
+
+export async function eliminarAvaliacao(utilizadorId) {
+  const response = await fetch(`${API_URL}/avaliacoes/utilizador/${utilizadorId}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao eliminar avaliação");
+  return json;
 }

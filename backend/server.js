@@ -8,6 +8,8 @@ const criarTabelas = require("./autotabelas");
 const imoveisRoutes = require("./routes/imoveis");
 const authRoutes = require("./routes/auth");
 const procuraRoutes = require("./routes/procura");
+const favoritosRoutes = require("./routes/favoritos");
+const avaliacoesRoutes = require("./routes/avaliacoes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,6 +36,8 @@ app.use(passport.session());
 app.use("/api/imoveis", imoveisRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/procura", procuraRoutes);
+app.use("/api/favoritos", favoritosRoutes);
+app.use("/api/avaliacoes", avaliacoesRoutes);
 
 // Rota raiz de verificação
 app.get("/", (req, res) => {
