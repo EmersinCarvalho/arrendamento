@@ -183,6 +183,7 @@ export default function PerfilAnunciante() {
           {[
             { key: "anuncios", label: `🏠 Anúncios (${imoveis.length})` },
             { key: "avaliacoes", label: `⭐ Avaliações (${avaliacoes.length})` },
+            { key: "contatos", label: "📞 Contactos" },
           ].map(({ key, label }) => (
             <button key={key} type="button"
               onClick={() => setTab(key)}
@@ -375,6 +376,72 @@ export default function PerfilAnunciante() {
           </div>
         </div>
         )} {/* fim tab avaliacoes */}
+
+        {/* ── Tab: Contactos ── */}
+        {tab === "contatos" && (
+          <div style={{ maxWidth: 520 }}>
+            {/* Bio */}
+            {anunciante.bio ? (
+              <div className="p-4 mb-3" style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #e0e0e0" }}>
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <span style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,195,0,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem" }}>📝</span>
+                  <span className="fw-bold" style={{ fontSize: "0.95rem" }}>Sobre mim</span>
+                </div>
+                <p className="mb-0" style={{ fontSize: "0.92rem", color: "#444", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{anunciante.bio}</p>
+              </div>
+            ) : null}
+
+            {/* Telemóvel / WhatsApp */}
+            {anunciante.telefone ? (
+              <div className="mb-3" style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #e0e0e0", overflow: "hidden" }}>
+                <div className="d-flex align-items-center gap-3 p-4">
+                  <span style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(37,211,102,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", flexShrink: 0 }}>&#128241;</span>
+                  <div className="flex-grow-1">
+                    <div className="text-muted" style={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Telemóvel</div>
+                    <div className="fw-bold" style={{ color: "#1a1a1a", fontSize: "1rem" }}>{anunciante.telefone}</div>
+                  </div>
+                </div>
+                <a
+                  href={`https://wa.me/${anunciante.telefone.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="d-flex align-items-center justify-content-center gap-2 fw-bold text-white text-decoration-none py-3"
+                  style={{ background: "#25D366", fontSize: "0.95rem", transition: "background 0.15s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "#1ebe5d"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "#25D366"}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.524 5.83L.057 23.57a.75.75 0 00.921.921l5.77-1.498A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.7-.497-5.254-1.367l-.376-.214-3.893 1.011 1.033-3.792-.233-.389A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                  </svg>
+                  Enviar mensagem no WhatsApp
+                </a>
+              </div>
+            ) : null}
+
+            {/* Email */}
+            <a
+              href={`mailto:${anunciante.email}`}
+              className="d-flex align-items-center gap-3 p-4 mb-3 text-decoration-none"
+              style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #e0e0e0", transition: "border-color 0.2s" }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "#FFC300"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "#e0e0e0"}
+            >
+              <span style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(66,133,244,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", flexShrink: 0 }}>✉️</span>
+              <div>
+                <div className="text-muted" style={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Email</div>
+                <div className="fw-bold" style={{ color: "#1a1a1a", fontSize: "1rem" }}>{anunciante.email}</div>
+              </div>
+            </a>
+
+            {!anunciante.bio && !anunciante.telefone && (
+              <div className="text-center py-5 text-muted">
+                <div style={{ fontSize: "3rem" }}>📭</div>
+                <p className="mt-2">Este anunciante ainda não adicionou informações de contacto.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

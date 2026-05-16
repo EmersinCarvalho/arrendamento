@@ -28,7 +28,7 @@ router.get("/utilizador/:id", async (req, res) => {
     );
 
     const [anunciante] = await db.execute(
-      "SELECT id, nome, foto_url, criado_em FROM utilizadores WHERE id = ?",
+      "SELECT id, nome, email, foto_url, telefone, bio, criado_em FROM utilizadores WHERE id = ?",
       [avaliado_id]
     );
 

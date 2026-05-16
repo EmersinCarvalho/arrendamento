@@ -115,55 +115,76 @@ export default function Navbar() {
                     {utilizador.perfil}
                   </span>
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end shadow">
+                <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" style={{ minWidth: 270, borderRadius: 16 }}>
+                  {/* Cabeçalho do utilizador */}
                   <li>
-                    <span className="dropdown-item-text text-muted small">
-                      {utilizador.email}
-                    </span>
+                    <div className="d-flex align-items-center gap-3 px-3 py-2 mb-1 rounded-3" style={{ background: "rgba(255,195,0,0.10)" }}>
+                      {utilizador.foto_url ? (
+                        <img src={utilizador.foto_url} alt={utilizador.nome} style={{ width: 42, height: 42, borderRadius: "50%", objectFit: "cover", border: "2px solid #FFC300" }} />
+                      ) : (
+                        <div style={{ width: 42, height: 42, borderRadius: "50%", background: "#FFC300", color: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "1.1rem", flexShrink: 0 }}>
+                          {utilizador.nome?.[0]?.toUpperCase() || "U"}
+                        </div>
+                      )}
+                      <div style={{ overflow: "hidden" }}>
+                        <div className="fw-bold" style={{ fontSize: "0.92rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{utilizador.nome?.split(" ")[0]}</div>
+                        <div className="text-muted" style={{ fontSize: "0.73rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{utilizador.email}</div>
+                        <span className="badge mt-1" style={{ background: utilizador.perfil === "senhorio" ? "#FFC300" : "#1a1a1a", color: utilizador.perfil === "senhorio" ? "#1a1a1a" : "#fff", fontSize: "0.65rem" }}>
+                          {utilizador.perfil}
+                        </span>
+                      </div>
+                    </div>
                   </li>
-                  <li><hr className="dropdown-divider" /></li>
+                  <li><hr className="dropdown-divider my-1" /></li>
+
+                  {/* Item helper */}
+                  {[
+                    { to: "/perfil", icon: "⚙️", label: "O meu perfil", sub: "Editar dados pessoais", color: "#FFC300" },
+                    { to: "/favoritos", icon: "❤️", label: "Favoritos", sub: "Imóveis guardados", color: "#ff4d6d" },
+                    ...(utilizador.perfil === "inquilino" ? [
+                      { to: "/setup-procura", icon: "🔍", label: "Preferências de procura", sub: "O que procuro", color: "#4361ee" },
+                      { to: "/descobrir", icon: "✨", label: "Descobrir imóveis", sub: "Sugestões para si", color: "#7209b7" },
+                    ] : []),
+                    ...(utilizador.perfil === "senhorio" ? [
+                      { to: "/meus-imoveis", icon: "🏠", label: "Os meus imóveis", sub: "Gerir anúncios", color: "#2196f3" },
+                      { to: "/imoveis/publicar", icon: "➕", label: "Publicar imóvel", sub: "Novo anúncio", color: "#43a047" },
+                    ] : []),
+                  ].map(({ to, icon, label, sub, color }) => (
+                    <li key={to}>
+                      <Link
+                        className="dropdown-item rounded-3 d-flex align-items-center gap-3 py-2 px-2"
+                        to={to}
+                        style={{ transition: "background 0.15s" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.05)"}
+                        onMouseLeave={e => e.currentTarget.style.background = ""}
+                      >
+                        <span style={{ width: 38, height: 38, borderRadius: "50%", background: color + "1a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.15rem", flexShrink: 0 }}>
+                          {icon}
+                        </span>
+                        <div>
+                          <div className="fw-semibold" style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>{label}</div>
+                          <div className="text-muted" style={{ fontSize: "0.73rem" }}>{sub}</div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+
+                  <li><hr className="dropdown-divider my-1" /></li>
                   <li>
-                    <Link className="dropdown-item fw-semibold" to="/perfil">
-                      ⚙️ O meu perfil
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/favoritos">
-                      ❤️ Favoritos
-                    </Link>
-                  </li>
-                  {utilizador.perfil === "inquilino" && (
-                    <li>
-                      <Link className="dropdown-item" to="/setup-procura">
-                        🔍 Preferências de procura
-                      </Link>
-                    </li>
-                  )}
-                  {utilizador.perfil === "inquilino" && (
-                    <li>
-                      <Link className="dropdown-item" to="/descobrir">
-                        ✨ Descobrir imóveis
-                      </Link>
-                    </li>
-                  )}
-                  {utilizador.perfil === "senhorio" && (
-                    <li>
-                      <Link className="dropdown-item" to="/meus-imoveis">
-                        🏠 Os meus imóveis
-                      </Link>
-                    </li>
-                  )}
-                  {utilizador.perfil === "senhorio" && (
-                    <li>
-                      <Link className="dropdown-item fw-semibold" to="/imoveis/publicar" style={{ color: "#b8860b" }}>
-                        + Publicar imóvel
-                      </Link>
-                    </li>
-                  )}
-                  <li><hr className="dropdown-divider" /></li>
-                  <li>
-                    <button className="dropdown-item text-danger fw-semibold" onClick={handleLogout}>
-                      Sair
+                    <button
+                      className="dropdown-item rounded-3 d-flex align-items-center gap-3 py-2 px-2 fw-semibold"
+                      style={{ color: "#e63946", transition: "background 0.15s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(230,57,70,0.08)"}
+                      onMouseLeave={e => e.currentTarget.style.background = ""}
+                      onClick={handleLogout}
+                    >
+                      <span style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(230,57,70,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.15rem", flexShrink: 0 }}>
+                        🚪
+                      </span>
+                      <div>
+                        <div style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>Sair</div>
+                        <div style={{ fontSize: "0.73rem", color: "#aaa" }}>Terminar sessão</div>
+                      </div>
                     </button>
                   </li>
                 </ul>

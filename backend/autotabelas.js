@@ -130,6 +130,14 @@ async function criarTabelas() {
       sql: "ALTER TABLE utilizadores MODIFY COLUMN password VARCHAR(255) NULL",
     },
     {
+      descricao: "telefone em utilizadores",
+      sql: "ALTER TABLE utilizadores ADD COLUMN telefone VARCHAR(30) NULL AFTER foto_url",
+    },
+    {
+      descricao: "bio em utilizadores",
+      sql: "ALTER TABLE utilizadores ADD COLUMN bio TEXT NULL AFTER telefone",
+    },
+    {
       descricao: "quartos em imoveis",
       sql: "ALTER TABLE imoveis ADD COLUMN quartos INT NOT NULL DEFAULT 0 AFTER tipologia",
     },

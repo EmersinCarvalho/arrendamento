@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getUtilizador, setToken, getToken, logout } from "../services/auth";
+import { atualizarContactos } from "../services/api";
 import logo from "../assets/logo.png";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -14,6 +15,11 @@ export default function Perfil() {
   const [saving, setSaving] = useState(false);
   const [sucesso, setSucesso] = useState(false);
 
+  const [telefone, setTelefone] = useState("");
+  const [bio, setBio] = useState("");
+  const [savingContacto, setSavingContacto] = useState(false);
+  const [sucessoContacto, setSucessoContacto] = useState(false);
+
   useEffect(() => {
     if (!utilizador) { navigate("/login"); return; }
     // Buscar data de criação
@@ -23,6 +29,8 @@ export default function Perfil() {
       .then((r) => r.json())
       .then((d) => {
         if (d.criado_em) setMembroDesde(new Date(d.criado_em));
+        if (d.telefone) setTelefone(d.telefone);
+        if (d.bio) setBio(d.bio);
       })
       .catch(() => {});
   }, []);
@@ -54,6 +62,20 @@ export default function Perfil() {
       alert("Erro ao guardar. Tente novamente.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function guardarContacto() {
+    setSavingContacto(true);
+    setSucessoContacto(false);
+    try {
+      await atualizarContactos({ telefone, bio });
+      setSucessoContacto(true);
+      setTimeout(() => setSucessoContacto(false), 3000);
+    } catch {
+      alert("Erro ao guardar. Tente novamente.");
+    } finally {
+      setSavingContacto(false);
     }
   }
 
@@ -252,6 +274,56 @@ export default function Perfil() {
               </Link>
             </div>
           )}
+
+          {/* ── Informações de contacto ── */}
+          <div className="rounded-4 shadow-sm p-4 mb-3" style={{ background: "#fff" }}>
+            <div className="d-flex align-items-center gap-2 mb-1">
+              <span style={{ fontSize: "1.1rem" }}>📞</span>
+              <h5 className="fw-bold mb-0" style={{ color: "#1a1a1a" }}>Informações de contacto</h5>
+            </div>
+            <p className="text-muted mb-3" style={{ fontSize: "0.85rem" }}>
+              Visíveis no seu perfil público para outros utilizadores.
+            </p>
+            <div className="mb-3">
+              <label className="form-label fw-semibold" style={{ fontSize: "0.85rem" }}>Telemóvel</label>
+              <input
+                type="tel"
+                className="form-control"
+                placeholder="+351 912 345 678"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value.replace(/[^0-9+\s\-()]/g, ""))}
+                style={{ borderRadius: 10 }}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label fw-semibold" style={{ fontSize: "0.85rem" }}>Sobre mim</label>
+              <textarea
+                className="form-control"
+                rows={3}
+                placeholder="Apresente-se brevemente aos potenciais inquilinos ou senhorios..."
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                maxLength={1000}
+                style={{ borderRadius: 10, resize: "none" }}
+              />
+              <div className="text-end text-muted" style={{ fontSize: "0.75rem" }}>{bio.length}/1000</div>
+            </div>
+            <button
+              onClick={guardarContacto}
+              disabled={savingContacto}
+              className="btn fw-bold px-4 py-2 rounded-3"
+              style={{ background: "#FFC300", color: "#1a1a1a", border: "none" }}
+            >
+              {savingContacto
+                ? <><span className="spinner-border spinner-border-sm me-2" />A guardar...</>
+                : "Guardar contactos"}
+            </button>
+            {sucessoContacto && (
+              <div className="alert alert-success py-2 px-3 mt-2 mb-0 rounded-3" style={{ fontSize: "0.85rem" }}>
+                ✅ Contactos atualizados!
+              </div>
+            )}
+          </div>
 
           {/* ── Conta ── */}
           <div className="rounded-4 shadow-sm p-4 mb-5" style={{ background: "#fff" }}>

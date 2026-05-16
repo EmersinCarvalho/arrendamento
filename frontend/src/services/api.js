@@ -135,3 +135,14 @@ export async function eliminarAvaliacao(utilizadorId) {
   if (!response.ok) throw new Error(json.erro || "Erro ao eliminar avaliação");
   return json;
 }
+
+export async function atualizarContactos(dados) {
+  const response = await fetch(`${API_URL}/auth/contactos`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(dados),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao atualizar contactos");
+  return json;
+}

@@ -89,13 +89,30 @@ router.put("/perfil", verificarToken, async (req, res) => {
 router.get("/me", verificarToken, async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, nome, email, perfil, foto_url, criado_em FROM utilizadores WHERE id = ?",
+      "SELECT id, nome, email, perfil, foto_url, telefone, bio, criado_em FROM utilizadores WHERE id = ?",
       [req.utilizador.id]
     );
     if (rows.length === 0) return res.status(404).json({ erro: "Utilizador não encontrado" });
     res.json(rows[0]);
   } catch (err) {
     res.status(500).json({ erro: "Erro ao carregar utilizador" });
+  }
+});
+
+// PUT /api/auth/contactos — atualiza telefone e bio do utilizador autenticado
+router.put("/contactos", verificarToken, async (req, res) => {
+  const { telefone, bio } = req.body;
+  const tel = telefone ? String(telefone).trim().slice(0, 30) : null;
+  const descricao = bio ? String(bio).trim().slice(0, 1000) : null;
+  try {
+    await db.execute(
+      "UPDATE utilizadores SET telefone = ?, bio = ? WHERE id = ?",
+      [tel, descricao, req.utilizador.id]
+    );
+    res.json({ mensagem: "Contactos atualizados" });
+  } catch (err) {
+    console.error("Erro em PUT /api/auth/contactos:", err.message);
+    res.status(500).json({ erro: "Erro ao atualizar contactos" });
   }
 });
 
