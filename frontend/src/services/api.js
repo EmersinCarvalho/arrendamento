@@ -88,7 +88,27 @@ export async function removerFavorito(imovelId) {
   await fetch(`${API_URL}/favoritos/${imovelId}`, { method: "DELETE", headers: authHeaders() });
 }
 
-// ── Avaliações ──────────────────────────────────────────────────────
+// ── Upload ────────────────────────────────────────────────────────
+export async function uploadFoto(file) {
+  const formData = new FormData();
+  formData.append("foto", file);
+  const response = await fetch(`${API_URL}/upload/foto`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao carregar imagem");
+  return json.url;
+}
+
+// ── Avaliações ────────────────────────────────────────────────────
+
+export async function getImoveisAnunciante(utilizadorId) {
+  const response = await fetch(`${API_URL}/imoveis/anunciante/${utilizadorId}`);
+  if (!response.ok) throw new Error("Erro ao carregar imóveis do anunciante");
+  return response.json();
+}
 export async function getAvaliacoesAnunciante(utilizadorId) {
   const response = await fetch(`${API_URL}/avaliacoes/utilizador/${utilizadorId}`);
   if (!response.ok) throw new Error("Erro ao carregar avaliações");

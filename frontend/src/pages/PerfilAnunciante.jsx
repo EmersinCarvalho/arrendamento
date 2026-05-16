@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../components/Loading";
-import { getAvaliacoesAnunciante, submeterAvaliacao, eliminarAvaliacao } from "../services/api";
+import { getAvaliacoesAnunciante, submeterAvaliacao, eliminarAvaliacao, getImoveisAnunciante } from "../services/api";
 import { getUtilizador } from "../services/auth";
 
 function Estrelas({ valor, tamanho = "1rem", interativo = false, onSelecionar }) {
@@ -47,8 +47,10 @@ export default function PerfilAnunciante() {
   const utilizador = getUtilizador();
 
   const [dados, setDados] = useState(null);
+  const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
+  const [tab, setTab] = useState("anuncios");
 
   // Formulário de avaliação
   const [novaEstrelas, setNovaEstrelas] = useState(0);
@@ -59,8 +61,14 @@ export default function PerfilAnunciante() {
 
   const carregar = () => {
     setLoading(true);
-    getAvaliacoesAnunciante(id)
-      .then(setDados)
+    Promise.all([
+      getAvaliacoesAnunciante(id),
+      getImoveisAnunciante(id),
+    ])
+      .then(([dadosAvaliacao, dadosImoveis]) => {
+        setDados(dadosAvaliacao);
+        setImoveis(dadosImoveis);
+      })
       .catch(() => setErro("Anunciante não encontrado."))
       .finally(() => setLoading(false));
   };
@@ -170,6 +178,85 @@ export default function PerfilAnunciante() {
           )}
         </div>
 
+        {/* Tabs */}
+        <div className="d-flex gap-2 mb-4" style={{ borderBottom: "2px solid #e0e0e0" }}>
+          {[
+            { key: "anuncios", label: `🏠 Anúncios (${imoveis.length})` },
+            { key: "avaliacoes", label: `⭐ Avaliações (${avaliacoes.length})` },
+          ].map(({ key, label }) => (
+            <button key={key} type="button"
+              onClick={() => setTab(key)}
+              style={{
+                background: "none", border: "none", padding: "8px 18px",
+                fontWeight: tab === key ? 700 : 400,
+                color: tab === key ? "#1a1a1a" : "#888",
+                borderBottom: tab === key ? "3px solid #FFC300" : "3px solid transparent",
+                marginBottom: -2, cursor: "pointer", fontSize: "0.95rem",
+                transition: "color 0.15s",
+              }}>{label}</button>
+          ))}
+        </div>
+
+        {/* ── Tab: Anúncios ── */}
+        {tab === "anuncios" && (
+          <div>
+            {imoveis.length === 0 ? (
+              <div className="text-center py-5 text-muted">
+                <div style={{ fontSize: "3rem" }}>🏠</div>
+                <p className="mt-2">Este anunciante não tem imóveis disponíveis de momento.</p>
+              </div>
+            ) : (
+              <div className="row g-3">
+                {imoveis.map((im) => (
+                  <div key={im.id} className="col-12 col-sm-6 col-lg-4">
+                    <Link to={`/imoveis/${im.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      <div className="h-100" style={{
+                        background: "#fff", borderRadius: 14,
+                        border: "1.5px solid #e0e0e0",
+                        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                        overflow: "hidden",
+                        transition: "box-shadow 0.2s, transform 0.2s",
+                      }}
+                        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.12)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.05)"; e.currentTarget.style.transform = "none"; }}>
+                        {/* Foto */}
+                        <div style={{ height: 160, background: "#f0f0f0", overflow: "hidden", position: "relative" }}>
+                          {im.foto ? (
+                            <img src={im.foto} alt={im.titulo}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          ) : (
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "2.5rem", color: "#ccc" }}>🏠</div>
+                          )}
+                          <span style={{
+                            position: "absolute", top: 8, left: 8,
+                            background: "#1a1a1a", color: "#FFC300",
+                            fontSize: "0.7rem", fontWeight: 700,
+                            padding: "2px 8px", borderRadius: 6,
+                          }}>{im.tipologia}</span>
+                        </div>
+                        {/* Info */}
+                        <div className="p-3">
+                          <div className="fw-semibold mb-1" style={{ fontSize: "0.9rem", lineHeight: 1.3 }}
+                            title={im.titulo}>
+                            {im.titulo.length > 52 ? im.titulo.slice(0, 52) + "…" : im.titulo}
+                          </div>
+                          <div className="text-muted mb-2" style={{ fontSize: "0.78rem" }}>📍 {im.cidade}</div>
+                          <div className="fw-bold" style={{ color: "#1a1a1a", fontSize: "1rem" }}>
+                            {Number(im.preco).toLocaleString("pt-PT")} €
+                            <span className="text-muted fw-normal" style={{ fontSize: "0.8rem" }}>/mês</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Tab: Avaliações ── */}
+        {tab === "avaliacoes" && (
         <div className="row g-4">
           {/* Coluna esquerda: formulário de avaliação */}
           {podeAvaliar && (
@@ -287,6 +374,7 @@ export default function PerfilAnunciante() {
             </div>
           </div>
         </div>
+        )} {/* fim tab avaliacoes */}
       </div>
     </div>
   );

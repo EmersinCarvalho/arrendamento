@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getUtilizador, getToken } from "../services/auth";
-import { criarImovel, atualizarImovel, getImovelById } from "../services/api";
+import { criarImovel, atualizarImovel, getImovelById, uploadFoto } from "../services/api";
 
 const TIPOLOGIAS = ["T0", "T1", "T2", "T3", "T4+"];
 const TIPOS_IMOVEL = ["Apartamento", "Moradia", "Quarto", "Estúdio"];
@@ -22,6 +22,7 @@ const FORM_INICIAL = {
   preco: "",
   descricao: "",
   foto: "",
+  fotos: [],
   aceita_pets: false,
   mobiliado: false,
   despesas_incluidas: false,
@@ -35,6 +36,7 @@ const FORM_INICIAL = {
   armarios_embutidos: false,
   orientacao: [],
   cozinha_equipada: false,
+  cozinha_mobilada: false,
   aquecimento: "",
   tipo_edificio: "",
   andar: "",
@@ -42,6 +44,9 @@ const FORM_INICIAL = {
   certificado_energetico: "",
   meses_caucao: "",
   fianca: false,
+  morada: "",
+  latitude: null,
+  longitude: null,
 };
 
 export default function PublicarImovel() {
@@ -55,6 +60,12 @@ export default function PublicarImovel() {
   const [loadingDados, setLoadingDados] = useState(isEdicao);
   const [erro, setErro] = useState(null);
   const [sucesso, setSucesso] = useState(false);
+  const [uploadando, setUploadando] = useState(false);
+  const [erroUpload, setErroUpload] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  const inputFotoRef = useRef(null);
+  const [geocodificando, setGeocodificando] = useState(false);
+  const [erroGeo, setErroGeo] = useState(null);
 
   // Redirecionar se não for senhorio
   useEffect(() => {
@@ -77,6 +88,7 @@ export default function PublicarImovel() {
           preco: imovel.preco || "",
           descricao: imovel.descricao || "",
           foto: imovel.foto || "",
+          fotos: Array.isArray(imovel.fotos) ? imovel.fotos : (imovel.foto ? [imovel.foto] : []),
           aceita_pets: Boolean(imovel.aceita_pets),
           mobiliado: Boolean(imovel.mobiliado),
           despesas_incluidas: Boolean(imovel.despesas_incluidas),
@@ -89,6 +101,7 @@ export default function PublicarImovel() {
           armarios_embutidos: Boolean(imovel.armarios_embutidos),
           orientacao: imovel.orientacao ? imovel.orientacao.split(",") : [],
           cozinha_equipada: Boolean(imovel.cozinha_equipada),
+          cozinha_mobilada: Boolean(imovel.cozinha_mobilada),
           aquecimento: imovel.aquecimento || "",
           tipo_edificio: imovel.tipo_edificio || "",
           andar: imovel.andar || "",
@@ -96,6 +109,9 @@ export default function PublicarImovel() {
           certificado_energetico: imovel.certificado_energetico || "",
           meses_caucao: imovel.meses_caucao ?? "",
           fianca: Boolean(imovel.fianca),
+          morada: imovel.morada || "",
+          latitude: imovel.latitude ?? null,
+          longitude: imovel.longitude ?? null,
         });
       })
       .catch(() => setErro("Imóvel não encontrado."))
@@ -119,6 +135,52 @@ export default function PublicarImovel() {
     });
   }
 
+  async function handleFotoUpload(file) {
+    if (!file) return;
+    if (form.fotos.length >= 10) {
+      setErroUpload("Máximo de 10 fotos atingido.");
+      return;
+    }
+    setErroUpload(null);
+    setUploadando(true);
+    try {
+      const url = await uploadFoto(file);
+      setForm((p) => {
+        const novas = [...p.fotos, url];
+        return { ...p, fotos: novas, foto: novas[0] };
+      });
+    } catch (err) {
+      setErroUpload(err.message);
+    } finally {
+      setUploadando(false);
+    }
+  }
+
+  function removerFoto(idx) {
+    setForm((p) => {
+      const novas = p.fotos.filter((_, i) => i !== idx);
+      return { ...p, fotos: novas, foto: novas[0] || "" };
+    });
+  }
+
+  async function geocodificar() {
+    const query = [form.morada, form.cidade, "Portugal"].filter(Boolean).join(", ");
+    if (!query.trim()) { setErroGeo("Preencha a morada ou a cidade antes de localizar."); return; }
+    setErroGeo(null);
+    setGeocodificando(true);
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=pt`;
+      const res = await fetch(url, { headers: { "Accept-Language": "pt" } });
+      const data = await res.json();
+      if (!data.length) { setErroGeo("Endereço não encontrado. Tente ser mais específico."); return; }
+      setForm((p) => ({ ...p, latitude: parseFloat(data[0].lat), longitude: parseFloat(data[0].lon) }));
+    } catch {
+      setErroGeo("Erro ao contactar o serviço de geocodificação.");
+    } finally {
+      setGeocodificando(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setErro(null);
@@ -138,6 +200,8 @@ export default function PublicarImovel() {
         certificado_energetico: form.certificado_energetico || null,
         meses_caucao: form.meses_caucao !== "" ? Number(form.meses_caucao) : null,
         fianca: form.fianca,
+        fotos: form.fotos,
+        foto: form.fotos[0] || null,
       };
       if (isEdicao) {
         await atualizarImovel(id, dados);
@@ -425,6 +489,41 @@ export default function PublicarImovel() {
                     ))}
                   </div>
                 </div>
+
+                {/* Morada + geocoding */}
+                <div className="mb-2">
+                  <label className="form-label fw-semibold">Morada (rua e número)</label>
+                  <div className="d-flex gap-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="morada"
+                      value={form.morada}
+                      onChange={handleChange}
+                      placeholder="Ex: Rua Augusta, 100"
+                      style={{ borderRadius: 10, border: "1.5px solid #e0e0e0", padding: "0.65rem 1rem" }}
+                    />
+                    <button type="button" onClick={geocodificar} disabled={geocodificando}
+                      className="btn btn-warning fw-semibold"
+                      style={{ borderRadius: 10, whiteSpace: "nowrap", minWidth: 120 }}>
+                      {geocodificando ? (
+                        <><span className="spinner-border spinner-border-sm me-1" />A localizar...</>
+                      ) : "📍 Localizar"}
+                    </button>
+                  </div>
+                  {erroGeo && <div className="text-danger mt-1" style={{ fontSize: "0.82rem" }}>⚠️ {erroGeo}</div>}
+                  {form.latitude && form.longitude && !erroGeo && (
+                    <div className="mt-1 d-flex align-items-center gap-2" style={{ fontSize: "0.82rem", color: "#198754" }}>
+                      ✅ Localização marcada no mapa
+                      <button type="button" className="btn btn-sm btn-link text-danger p-0"
+                        style={{ fontSize: "0.78rem" }}
+                        onClick={() => setForm((p) => ({ ...p, latitude: null, longitude: null }))}>
+                        Remover
+                      </button>
+                    </div>
+                  )}
+                  <div className="form-text">A localização no mapa é aproximada e não revela o endereço exato.</div>
+                </div>
               </div>
 
               {/* Descrição e foto */}
@@ -448,30 +547,98 @@ export default function PublicarImovel() {
                   />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label fw-semibold">URL da foto principal</label>
-                  <input
-                    type="url"
-                    className="form-control"
-                    name="foto"
-                    value={form.foto}
-                    onChange={handleChange}
-                    placeholder="https://exemplo.com/foto-imovel.jpg"
-                    style={{ borderRadius: 10, border: "1.5px solid #e0e0e0", padding: "0.65rem 1rem" }}
-                  />
-                </div>
-                {form.foto && (
-                  <div className="mt-2">
-                    <img
-                      src={form.foto}
-                      alt="Pré-visualização"
-                      style={{
-                        width: "100%", maxHeight: 240, objectFit: "cover",
-                        borderRadius: 10, border: "1.5px solid #e0e0e0",
+                  <label className="form-label fw-semibold">
+                    Fotos do imóvel
+                    <span className="text-muted fw-normal ms-2" style={{ fontSize: "0.82rem" }}>
+                      ({form.fotos.length}/10) — a 1.ª foto é a capa
+                    </span>
+                  </label>
+
+                  {/* Grid de fotos existentes */}
+                  {form.fotos.length > 0 && (
+                    <div className="d-flex flex-wrap gap-2 mb-3">
+                      {form.fotos.map((url, idx) => (
+                        <div key={url + idx} style={{ position: "relative", width: 110, height: 85 }}>
+                          <img src={url} alt={`Foto ${idx + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8,
+                              border: idx === 0 ? "2.5px solid #FFC300" : "1.5px solid #e0e0e0" }} />
+                          {idx === 0 && (
+                            <span style={{
+                              position: "absolute", top: 4, left: 4,
+                              background: "#FFC300", color: "#1a1a1a",
+                              fontSize: "0.6rem", fontWeight: 700, padding: "1px 5px", borderRadius: 4,
+                            }}>CAPA</span>
+                          )}
+                          <button type="button"
+                            onClick={() => removerFoto(idx)}
+                            style={{
+                              position: "absolute", top: 3, right: 3,
+                              width: 20, height: 20, borderRadius: "50%",
+                              background: "rgba(0,0,0,0.65)", color: "#fff",
+                              border: "none", cursor: "pointer", fontSize: "0.7rem",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              lineHeight: 1,
+                            }}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Zona de adicionar foto */}
+                  {form.fotos.length < 10 && (
+                    <div
+                      onClick={() => inputFotoRef.current?.click()}
+                      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                      onDragLeave={() => setDragOver(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragOver(false);
+                        Array.from(e.dataTransfer.files || []).forEach((f) => handleFotoUpload(f));
                       }}
-                      onError={(e) => { e.target.style.display = "none"; }}
-                    />
-                  </div>
-                )}
+                      style={{
+                        border: `2px dashed ${dragOver ? "#FFC300" : "#e0e0e0"}`,
+                        borderRadius: 12,
+                        background: dragOver ? "rgba(255,195,0,0.06)" : "#fafafa",
+                        cursor: "pointer",
+                        minHeight: 120,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        transition: "border-color 0.2s, background 0.2s",
+                      }}
+                    >
+                      <div className="text-center p-3">
+                        {uploadando ? (
+                          <>
+                            <div className="spinner-border mb-2" style={{ color: "#FFC300", width: 30, height: 30 }} />
+                            <div className="text-muted" style={{ fontSize: "0.82rem" }}>A carregar...</div>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ fontSize: "2rem", marginBottom: 4 }}>📂</div>
+                            <div className="fw-semibold mb-1" style={{ fontSize: "0.88rem" }}>
+                              {form.fotos.length === 0 ? "Clique ou arraste imagens" : "Adicionar mais fotos"}
+                            </div>
+                            <div className="text-muted" style={{ fontSize: "0.78rem" }}>
+                              JPEG, PNG ou WebP · máx. 8 MB por foto
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <input
+                    ref={inputFotoRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    style={{ display: "none" }}
+                    onChange={(e) => Array.from(e.target.files || []).forEach((f) => handleFotoUpload(f))}
+                  />
+
+                  {erroUpload && (
+                    <div className="text-danger mt-2" style={{ fontSize: "0.82rem" }}>⚠️ {erroUpload}</div>
+                  )}
+                </div>
               </div>
 
               {/* Extras */}
@@ -610,6 +777,7 @@ export default function PublicarImovel() {
                     { name: "garagem", label: "🚗 Garagem" },
                     { name: "armarios_embutidos", label: "🗄️ Armários embutidos" },
                     { name: "cozinha_equipada", label: "🍳 Cozinha equipada" },
+                    { name: "cozinha_mobilada", label: "🍽️ Cozinha mobilada" },
                     { name: "elevador", label: "🛗 Elevador" },
                   ].map(({ name, label }) => (
                     <div key={name} className="col-md-6 col-lg-4">

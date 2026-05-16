@@ -1,7 +1,188 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../components/Loading";
-import { getImovelById, getAvaliacoesAnunciante } from "../services/api";
+import MapaImovel from "../components/MapaImovel";
+import { useTema } from "../context/ThemeContext";
+import { getImovelById, getAvaliacoesAnunciante, getFavoritos, adicionarFavorito, removerFavorito } from "../services/api";
+import { isAutenticado } from "../services/auth";
+
+function GaleriaFotos({ fotos, titulo, favorito, togglingFav, onToggleFavorito }) {
+  const [ativa, setAtiva] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+
+  // Fechar lightbox com Escape
+  useEffect(() => {
+    if (!lightbox) return;
+    const handler = (e) => { if (e.key === "Escape") setLightbox(false); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightbox]);
+
+  if (!fotos || fotos.length === 0) {
+    return (
+      <div className="d-flex align-items-center justify-content-center bg-light"
+        style={{ height: 300, fontSize: "4rem", color: "#ccc" }}>🏠</div>
+    );
+  }
+
+  const irAnterior = (e) => { e?.stopPropagation(); setAtiva((i) => (i - 1 + fotos.length) % fotos.length); };
+  const irSeguinte = (e) => { e?.stopPropagation(); setAtiva((i) => (i + 1) % fotos.length); };
+
+  return (
+    <>
+      {/* Imagem principal */}
+      <div style={{ position: "relative" }}>
+        <img src={fotos[ativa]} alt={titulo}
+          className="w-100"
+          style={{ maxHeight: 420, objectFit: "cover", display: "block", cursor: "zoom-in" }}
+          onClick={() => setLightbox(true)}
+          title="Clique para ver em tamanho completo"
+        />
+        {/* Botão favoritar */}
+        {onToggleFavorito && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleFavorito(); }}
+            disabled={togglingFav}
+            title={favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            style={{
+              position: "absolute", top: 10, right: 10,
+              background: "rgba(255,255,255,0.92)",
+              border: "none",
+              borderRadius: "50%",
+              width: 42, height: 42,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.22)",
+              fontSize: "1.25rem",
+              transition: "transform 0.15s",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.13)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+          >
+            {favorito ? "❤️" : "🤍"}
+          </button>
+        )}
+        {fotos.length > 1 && (
+          <>
+            <button onClick={irAnterior}
+              style={{
+                position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)",
+                background: "rgba(0,0,0,0.55)", color: "#fff", border: "none", borderRadius: "50%",
+                width: 38, height: 38, fontSize: "1.2rem", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>‹</button>
+            <button onClick={irSeguinte}
+              style={{
+                position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                background: "rgba(0,0,0,0.55)", color: "#fff", border: "none", borderRadius: "50%",
+                width: 38, height: 38, fontSize: "1.2rem", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>›</button>
+          </>
+        )}
+        {/* Botão fullscreen + contador */}
+        <div style={{ position: "absolute", bottom: 10, right: 12, display: "flex", gap: 6, alignItems: "center" }}>
+          {fotos.length > 1 && (
+            <span style={{
+              background: "rgba(0,0,0,0.55)", color: "#fff",
+              fontSize: "0.75rem", padding: "2px 10px", borderRadius: 20,
+            }}>{ativa + 1} / {fotos.length}</span>
+          )}
+          <button onClick={() => setLightbox(true)} title="Ver em tamanho completo"
+            style={{
+              background: "rgba(0,0,0,0.55)", color: "#fff", border: "none", borderRadius: 6,
+              width: 30, height: 26, cursor: "pointer", fontSize: "0.85rem",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>⛶</button>
+        </div>
+      </div>
+
+      {/* Tira de miniaturas */}
+      {fotos.length > 1 && (
+        <div className="d-flex gap-1 p-2" style={{ background: "#111", flexWrap: "wrap" }}>
+          {fotos.map((url, idx) => (
+            <img key={idx} src={url} alt={`Foto ${idx + 1}`}
+              onClick={() => setAtiva(idx)}
+              style={{
+                width: 62, height: 46, objectFit: "cover", borderRadius: 6, cursor: "pointer",
+                border: idx === ativa ? "2px solid #FFC300" : "2px solid transparent",
+                opacity: idx === ativa ? 1 : 0.55, transition: "opacity 0.2s",
+              }} />
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            background: "rgba(0,0,0,0.92)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+          }}
+        >
+          {/* Fechar */}
+          <button onClick={() => setLightbox(false)}
+            style={{
+              position: "absolute", top: 16, right: 20,
+              background: "rgba(255,255,255,0.12)", color: "#fff", border: "none",
+              borderRadius: "50%", width: 40, height: 40, fontSize: "1.3rem",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            }}>✕</button>
+
+          {/* Imagem a tamanho completo */}
+          <img
+            src={fotos[ativa]} alt={titulo}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: "90vw", maxHeight: "82vh",
+              objectFit: "contain", borderRadius: 8,
+              boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
+            }}
+          />
+
+          {/* Navegação lightbox */}
+          {fotos.length > 1 && (
+            <>
+              <button onClick={irAnterior}
+                style={{
+                  position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.12)", color: "#fff", border: "none", borderRadius: "50%",
+                  width: 48, height: 48, fontSize: "1.6rem", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>‹</button>
+              <button onClick={irSeguinte}
+                style={{
+                  position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.12)", color: "#fff", border: "none", borderRadius: "50%",
+                  width: 48, height: 48, fontSize: "1.6rem", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>›</button>
+              {/* Miniaturas no lightbox */}
+              <div className="d-flex gap-2 mt-3" style={{ flexWrap: "wrap", justifyContent: "center" }}
+                onClick={(e) => e.stopPropagation()}>
+                {fotos.map((url, idx) => (
+                  <img key={idx} src={url} alt={`Foto ${idx + 1}`}
+                    onClick={() => setAtiva(idx)}
+                    style={{
+                      width: 56, height: 40, objectFit: "cover", borderRadius: 5, cursor: "pointer",
+                      border: idx === ativa ? "2px solid #FFC300" : "2px solid rgba(255,255,255,0.2)",
+                      opacity: idx === ativa ? 1 : 0.5, transition: "opacity 0.2s",
+                    }} />
+                ))}
+              </div>
+              <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", marginTop: 8 }}>
+                {ativa + 1} / {fotos.length}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
 
 function tempoRelativo(dataStr) {
   if (!dataStr) return null;
@@ -24,17 +205,26 @@ function Detalhe({ icon, label, valor }) {
     <div className="d-flex align-items-start gap-2 py-2" style={{ borderBottom: "1px solid #f0f0f0" }}>
       <span style={{ fontSize: "1rem", minWidth: 22 }}>{icon}</span>
       <span className="text-muted" style={{ fontSize: "0.88rem", minWidth: 130 }}>{label}</span>
-      <span className="fw-semibold" style={{ fontSize: "0.88rem", color: "#1a1a1a" }}>{valor}</span>
+      {valor === "Sim"
+        ? <span className="fw-semibold d-flex align-items-center gap-1" style={{ fontSize: "0.88rem", color: "#198754" }}>✅ Sim</span>
+        : valor === "Não"
+        ? <span className="fw-semibold d-flex align-items-center gap-1" style={{ fontSize: "0.88rem", color: "#dc3545" }}><span style={{ fontWeight: "bold" }}>✕</span> Não</span>
+        : <span className="fw-semibold" style={{ fontSize: "0.88rem", color: "#1a1a1a" }}>{valor}</span>
+      }
     </div>
   );
 }
 
 export default function DetalheImovel() {
   const { id } = useParams();
+  const { darkMode } = useTema();
   const [imovel, setImovel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   const [statsAnunciante, setStatsAnunciante] = useState(null);
+  const [descricaoExpandida, setDescricaoExpandida] = useState(false);
+  const [favorito, setFavorito] = useState(false);
+  const [togglingFav, setTogglingFav] = useState(false);
 
   useEffect(() => {
     getImovelById(id)
@@ -50,6 +240,23 @@ export default function DetalheImovel() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (isAutenticado()) {
+      getFavoritos().then(ids => {
+        setFavorito(ids.includes(Number(id)));
+      }).catch(() => {});
+    }
+  }, [id]);
+
+  async function toggleFavorito() {
+    if (!isAutenticado()) return;
+    setTogglingFav(true);
+    try {
+      if (favorito) { await removerFavorito(id); setFavorito(false); }
+      else { await adicionarFavorito(id); setFavorito(true); }
+    } finally { setTogglingFav(false); }
+  }
+
   if (loading) return <div className="container py-5"><Loading /></div>;
   if (erro)
     return (
@@ -61,7 +268,7 @@ export default function DetalheImovel() {
 
   const temEspecificas = imovel.area || imovel.casas_banho || imovel.varanda || imovel.garagem ||
     imovel.estado || imovel.armarios_embutidos || imovel.orientacao || imovel.cozinha_equipada ||
-    imovel.aquecimento || imovel.tipo_edificio || imovel.andar || imovel.certificado_energetico;
+    imovel.cozinha_mobilada || imovel.aquecimento || imovel.tipo_edificio || imovel.andar || imovel.certificado_energetico;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
@@ -73,15 +280,17 @@ export default function DetalheImovel() {
         <div className="row g-4">
           {/* Coluna esquerda: foto + características */}
           <div className="col-12 col-lg-7">
-            {/* Foto */}
+            {/* Foto / Galeria */}
             <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
-              {imovel.foto ? (
-                <img src={imovel.foto} alt={imovel.titulo}
-                  className="w-100" style={{ maxHeight: 420, objectFit: "cover", display: "block" }} />
-              ) : (
-                <div className="d-flex align-items-center justify-content-center bg-light"
-                  style={{ height: 300, fontSize: "4rem", color: "#ccc" }}>🏠</div>
-              )}
+              <GaleriaFotos
+                fotos={Array.isArray(imovel.fotos) && imovel.fotos.length > 0
+                  ? imovel.fotos
+                  : imovel.foto ? [imovel.foto] : []}
+                titulo={imovel.titulo}
+                favorito={favorito}
+                togglingFav={togglingFav}
+                onToggleFavorito={isAutenticado() ? toggleFavorito : null}
+              />
             </div>
 
             {/* Stats rápidas */}
@@ -114,35 +323,49 @@ export default function DetalheImovel() {
               </div>
             )}
 
-            {/* Características Adicionais */}
-            <div className="mt-4 p-4"
-              style={{ background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-              <h6 className="fw-bold mb-3" style={{ color: "#1a1a1a" }}>✨ Características Adicionais</h6>
-              <div className="d-flex flex-column gap-2">
-                {[
-                  { cond: imovel.aceita_pets,       icon: "🐾", label: "Aceita animais de estimação" },
-                  { cond: imovel.mobiliado,          icon: "🛋️", label: "Mobilado" },
-                  { cond: imovel.despesas_incluidas, icon: "💡", label: "Despesas incluídas" },
-                  { cond: imovel.disponivel,         icon: "✅", label: "Disponível para arrendamento" },
-                ].map(({ cond, icon, label }) => (
-                  <div key={label} className="d-flex align-items-center gap-2 px-3 py-2"
-                    style={{
-                      borderRadius: 10,
-                      background: cond ? "rgba(255,195,0,0.08)" : "#f5f5f5",
-                      border: `1.5px solid ${cond ? "#FFC300" : "#e0e0e0"}`,
-                      opacity: cond ? 1 : 0.5,
-                    }}>
-                    <span style={{ fontSize: "1.1rem" }}>{icon}</span>
-                    <span className="fw-semibold" style={{ fontSize: "0.9rem", color: cond ? "#1a1a1a" : "#999" }}>
-                      {label}
-                    </span>
-                    {!cond && (
-                      <span className="ms-auto" style={{ color: "#dc3545", fontSize: "1rem", fontWeight: "bold" }}>✕</span>
-                    )}
-                  </div>
-                ))}
+            {/* Condições de Entrada */}
+            {(imovel.meses_caucao || imovel.fianca) && (
+              <div className="mt-4 p-4"
+                style={{ background: darkMode ? "#2a2200" : "#fff8e1", borderRadius: 16, border: "1.5px solid #FFC300", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+                <h6 className="fw-bold mb-3" style={{ color: darkMode ? "#FFC300" : "#1a1a1a" }}>🔐 Condições de Entrada</h6>
+                <div className="d-flex flex-column gap-2">
+                  {imovel.meses_caucao && (
+                    <>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span style={{ fontSize: "0.85rem", color: darkMode ? "#aaa" : "#6c757d" }}>💰 Caução</span>
+                        <span className="fw-bold" style={{ color: darkMode ? "#e0e0e0" : "#1a1a1a" }}>
+                          {imovel.meses_caucao} {imovel.meses_caucao === 1 ? "mês" : "meses"} de renda
+                        </span>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span style={{ fontSize: "0.85rem", color: darkMode ? "#aaa" : "#6c757d" }}>📊 Valor da caução</span>
+                        <span className="fw-bold" style={{ color: darkMode ? "#FFD740" : "#b8860b" }}>
+                          {(Number(imovel.preco) * imovel.meses_caucao).toLocaleString("pt-PT")} €
+                        </span>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center pt-2"
+                        style={{ borderTop: "1px dashed #FFC300" }}>
+                        <span className="fw-semibold" style={{ fontSize: "0.88rem", color: darkMode ? "#e0e0e0" : "#1a1a1a" }}>💵 Total entrada estimado</span>
+                        <span className="fw-bold fs-6" style={{ color: darkMode ? "#FFD740" : "#b8860b" }}>
+                          {(Number(imovel.preco) * (imovel.meses_caucao + 1)).toLocaleString("pt-PT")} €
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: darkMode ? "#aaa" : "#6c757d" }}>
+                        * Caução ({imovel.meses_caucao}×{Number(imovel.preco).toLocaleString("pt-PT")} €) + 1.º mês de renda
+                      </div>
+                    </>
+                  )}
+                  {imovel.fianca && (
+                    <div className="d-flex align-items-center gap-2 mt-1 pt-2"
+                      style={{ borderTop: imovel.meses_caucao ? "none" : undefined }}>
+                      <span>🤝</span>
+                      <span className="fw-semibold" style={{ fontSize: "0.88rem", color: darkMode ? "#e0e0e0" : "#1a1a1a" }}>Fiança obrigatória</span>
+                      <span style={{ fontSize: "0.78rem", color: darkMode ? "#aaa" : "#6c757d" }}>(fiador exigido)</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Características Específicas */}
             {temEspecificas && (
@@ -159,10 +382,14 @@ export default function DetalheImovel() {
                 <Detalhe icon="🗄️" label="Armários embutidos" valor={imovel.armarios_embutidos ? "Sim" : null} />
                 <Detalhe icon="🧭" label="Orientação" valor={imovel.orientacao} />
                 <Detalhe icon="🍳" label="Cozinha equipada" valor={imovel.cozinha_equipada ? "Sim" : null} />
+                <Detalhe icon="🍴" label="Cozinha mobilada" valor={imovel.cozinha_mobilada ? "Sim" : "Não"} />
                 <Detalhe icon="🔥" label="Aquecimento" valor={imovel.aquecimento} />
                 <Detalhe icon="🏢" label="Tipo de edifício" valor={imovel.tipo_edificio} />
                 <Detalhe icon="🛗" label="Andar" valor={imovel.andar} />
                 <Detalhe icon="🛗" label="Elevador" valor={imovel.elevador ? "Sim" : (imovel.andar ? "Não" : null)} />
+                <Detalhe icon="🐾" label="Aceita animais" valor={imovel.aceita_pets ? "Sim" : "Não"} />
+                <Detalhe icon="🛋️" label="Mobilado" valor={imovel.mobiliado ? "Sim" : "Não"} />
+                <Detalhe icon="💡" label="Despesas incluídas" valor={imovel.despesas_incluidas ? "Sim" : "Não"} />
 
                 {/* Certificado energético */}
                 {imovel.certificado_energetico && (
@@ -184,14 +411,34 @@ export default function DetalheImovel() {
                 )}
               </div>
             )}
+
+            {/* Mapa */}
+            {(imovel.latitude && imovel.longitude) && (
+              <div className="mt-4">
+                <MapaImovel
+                  latitude={imovel.latitude}
+                  longitude={imovel.longitude}
+                  titulo={imovel.titulo}
+                />
+              </div>
+            )}
+
+
           </div>
 
           {/* Coluna direita: preço, extras, senhorio, CTA */}
           <div className="col-12 col-lg-5">
             <div style={{ position: "sticky", top: 80 }}>
-              <div className="d-flex gap-2 mb-3">
+              <div className="d-flex align-items-center gap-2 mb-3">
                 <span className="badge bg-warning text-dark fs-6">{imovel.tipologia}</span>
                 <span className="badge bg-dark fs-6">{imovel.cidade}</span>
+                <span
+                  title="Clique para copiar a referência"
+                  onClick={() => navigator.clipboard.writeText(`AH-${String(imovel.id).padStart(6, "0")}`)}
+                  style={{ fontSize: "0.72rem", letterSpacing: "0.8px", fontWeight: 600, color: "#888", cursor: "pointer", userSelect: "none" }}
+                >
+                  Ref. AH-{String(imovel.id).padStart(6, "0")} 📋
+                </span>
               </div>
 
               <h1 className="fw-bold mb-2" style={{ fontSize: "1.6rem" }}>{imovel.titulo}</h1>
@@ -207,8 +454,6 @@ export default function DetalheImovel() {
                   <span>🔄 Atualizado {tempoRelativo(imovel.atualizado_em)}</span>
                 )}
               </div>
-
-              {imovel.descricao && <p className="text-muted mb-4">{imovel.descricao}</p>}
 
               {/* Preço */}
               <div className="p-4 mb-4"
@@ -227,47 +472,34 @@ export default function DetalheImovel() {
                 ) : null}
               </div>
 
-              {/* Condições de Entrada */}
-              {(imovel.meses_caucao || imovel.fianca) && (
-                <div className="mb-4 p-4"
-                  style={{ background: "#fff8e1", borderRadius: 14, border: "1.5px solid #FFC300" }}>
-                  <h6 className="fw-bold mb-3" style={{ color: "#1a1a1a" }}>🔐 Condições de Entrada</h6>
-                  <div className="d-flex flex-column gap-2">
-                    {imovel.meses_caucao && (
-                      <>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <span className="text-muted" style={{ fontSize: "0.85rem" }}>💰 Caução</span>
-                          <span className="fw-bold">
-                            {imovel.meses_caucao} {imovel.meses_caucao === 1 ? "mês" : "meses"} de renda
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <span className="text-muted" style={{ fontSize: "0.85rem" }}>📊 Valor da caução</span>
-                          <span className="fw-bold" style={{ color: "#b8860b" }}>
-                            {(Number(imovel.preco) * imovel.meses_caucao).toLocaleString("pt-PT")} €
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-between align-items-center pt-2"
-                          style={{ borderTop: "1px dashed #FFC300" }}>
-                          <span className="fw-semibold" style={{ fontSize: "0.88rem" }}>💵 Total entrada estimado</span>
-                          <span className="fw-bold fs-6" style={{ color: "#b8860b" }}>
-                            {(Number(imovel.preco) * (imovel.meses_caucao + 1)).toLocaleString("pt-PT")} €
-                          </span>
-                        </div>
-                        <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                          * Caução ({imovel.meses_caucao}×{Number(imovel.preco).toLocaleString("pt-PT")} €) + 1.º mês de renda
-                        </div>
-                      </>
-                    )}
-                    {imovel.fianca && (
-                      <div className="d-flex align-items-center gap-2 mt-1 pt-2"
-                        style={{ borderTop: imovel.meses_caucao ? "none" : undefined }}>
-                        <span>🤝</span>
-                        <span className="fw-semibold" style={{ fontSize: "0.88rem" }}>Fiança obrigatória</span>
-                        <span className="text-muted" style={{ fontSize: "0.78rem" }}>(fiador exigido)</span>
-                      </div>
-                    )}
+              {imovel.descricao && (
+                <div className="mb-4 p-3"
+                  style={{ background: darkMode ? "#2a2a2a" : "#f8f9fa", borderRadius: 12, borderLeft: "4px solid #FFC300" }}>
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <span style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 700, color: "#FFC300" }}>
+                      💬 Comentário do anunciante
+                    </span>
                   </div>
+                  <p className="mb-0" style={{
+                    fontSize: "0.9rem", color: darkMode ? "#e0e0e0" : "#444", lineHeight: 1.6, whiteSpace: "pre-line",
+                    ...(!descricaoExpandida ? {
+                      display: "-webkit-box",
+                      WebkitLineClamp: 7,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    } : {}),
+                  }}>
+                    {imovel.descricao}
+                  </p>
+                  {imovel.descricao.split("\n").length > 7 || imovel.descricao.length > 350 ? (
+                    <button
+                      className="btn btn-link p-0 mt-1"
+                      style={{ fontSize: "0.8rem", color: "#FFC300", textDecoration: "none", fontWeight: 600 }}
+                      onClick={() => setDescricaoExpandida(v => !v)}
+                    >
+                      {descricaoExpandida ? "▲ Ver menos" : "▼ Ver mais"}
+                    </button>
+                  ) : null}
                 </div>
               )}
 

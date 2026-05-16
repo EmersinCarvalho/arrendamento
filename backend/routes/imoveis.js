@@ -46,6 +46,21 @@ router.get("/meus", verificarToken, async (req, res) => {
   }
 });
 
+// GET /api/imoveis/anunciante/:id - imóveis públicos de um anunciante específico
+// (deve ficar ANTES de /:id)
+router.get("/anunciante/:id", async (req, res) => {
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM imoveis WHERE utilizador_id = ? AND disponivel = 1 ORDER BY criado_em DESC",
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Erro em GET /api/imoveis/anunciante/:id:", err.message);
+    res.status(500).json({ erro: "Erro ao carregar imóveis do anunciante" });
+  }
+});
+
 // GET /api/imoveis/:id - detalhes de um imóvel (inclui info do senhorio)
 router.get("/:id", async (req, res) => {
   try {
@@ -64,7 +79,15 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ erro: "Imóvel não encontrado" });
     }
 
-    res.json(rows[0]);
+    const imovel = rows[0];
+    // Deserializar fotos
+    if (imovel.fotos) {
+      try { imovel.fotos = JSON.parse(imovel.fotos); } catch { imovel.fotos = []; }
+    } else {
+      imovel.fotos = imovel.foto ? [imovel.foto] : [];
+    }
+
+    res.json(imovel);
   } catch (err) {
     console.error("Erro em GET /api/imoveis/:id:", err.message);
     res.status(500).json({ erro: "Erro ao carregar imóvel" });
@@ -80,13 +103,19 @@ router.post("/", verificarToken, async (req, res) => {
   const {
     titulo, cidade, tipologia, preco, descricao,
     quartos, tipo_imovel, aceita_pets, mobiliado,
-    despesas_incluidas, foto,
+    despesas_incluidas, foto, fotos,
     // novos campos
     area, casas_banho, varanda, garagem, estado,
     armarios_embutidos, orientacao, cozinha_equipada,
     aquecimento, tipo_edificio, andar, elevador, certificado_energetico,
     meses_caucao, fianca,
+    morada, latitude, longitude,
   } = req.body;
+
+  // foto principal = primeiro item de fotos; fallback para foto solo
+  const fotosArray = Array.isArray(fotos) ? fotos.slice(0, 10) : (foto ? [foto] : []);
+  const fotoPrincipal = fotosArray[0] || null;
+  const fotosJson = fotosArray.length > 0 ? JSON.stringify(fotosArray) : null;
 
   if (!titulo || !cidade || !tipologia || !preco) {
     return res.status(400).json({ erro: "Campos obrigatórios: titulo, cidade, tipologia, preco" });
@@ -99,12 +128,12 @@ router.post("/", verificarToken, async (req, res) => {
          tipo_imovel, aceita_pets, mobiliado, despesas_incluidas, foto, disponivel,
          area, casas_banho, varanda, garagem, estado, armarios_embutidos, orientacao,
          cozinha_equipada, aquecimento, tipo_edificio, andar, elevador, certificado_energetico,
-         meses_caucao, fianca)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         meses_caucao, fianca, fotos, morada, latitude, longitude)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.utilizador.id, titulo, cidade, tipologia, preco,
         descricao || null, quartos || null, tipo_imovel || null,
-        aceita_pets ? 1 : 0, mobiliado ? 1 : 0, despesas_incluidas ? 1 : 0, foto || null,
+        aceita_pets ? 1 : 0, mobiliado ? 1 : 0, despesas_incluidas ? 1 : 0, fotoPrincipal,
         area || null, casas_banho || null,
         varanda ? 1 : 0, garagem ? 1 : 0,
         estado || null, armarios_embutidos ? 1 : 0,
@@ -112,6 +141,10 @@ router.post("/", verificarToken, async (req, res) => {
         aquecimento || null, tipo_edificio || null, andar || null,
         elevador ? 1 : 0, certificado_energetico || null,
         meses_caucao ? Number(meses_caucao) : null, fianca ? 1 : 0,
+        fotosJson,
+        morada || null,
+        latitude != null ? Number(latitude) : null,
+        longitude != null ? Number(longitude) : null,
       ]
     );
     res.status(201).json({ id: result.insertId, mensagem: "Imóvel publicado com sucesso" });
@@ -136,13 +169,19 @@ router.put("/:id", verificarToken, async (req, res) => {
     const {
       titulo, cidade, tipologia, preco, descricao,
       quartos, tipo_imovel, aceita_pets, mobiliado,
-      despesas_incluidas, foto, disponivel,
+      despesas_incluidas, foto, fotos, disponivel,
       // novos campos
       area, casas_banho, varanda, garagem, estado,
       armarios_embutidos, orientacao, cozinha_equipada,
-      aquecimento, tipo_edificio, andar, elevador, certificado_energetico,
+      aquecimento, cozinha_mobilada, tipo_edificio, andar, elevador, certificado_energetico,
       meses_caucao, fianca,
+      morada, latitude, longitude,
     } = req.body;
+
+    // foto principal = primeiro item de fotos; fallback para foto solo
+    const fotosArray = Array.isArray(fotos) ? fotos.slice(0, 10) : (foto ? [foto] : []);
+    const fotoPrincipal = fotosArray[0] || null;
+    const fotosJson = fotosArray.length > 0 ? JSON.stringify(fotosArray) : null;
 
     await db.execute(
       `UPDATE imoveis SET
@@ -151,22 +190,27 @@ router.put("/:id", verificarToken, async (req, res) => {
         despesas_incluidas = ?, foto = ?, disponivel = ?,
         area = ?, casas_banho = ?, varanda = ?, garagem = ?, estado = ?,
         armarios_embutidos = ?, orientacao = ?, cozinha_equipada = ?,
-        aquecimento = ?, tipo_edificio = ?, andar = ?, elevador = ?,
-        certificado_energetico = ?, meses_caucao = ?, fianca = ?
+        aquecimento = ?, cozinha_mobilada = ?, tipo_edificio = ?, andar = ?, elevador = ?,
+        certificado_energetico = ?, meses_caucao = ?, fianca = ?, fotos = ?,
+        morada = ?, latitude = ?, longitude = ?
        WHERE id = ?`,
       [
         titulo, cidade, tipologia, preco,
         descricao || null, quartos || null, tipo_imovel || null,
         aceita_pets ? 1 : 0, mobiliado ? 1 : 0, despesas_incluidas ? 1 : 0,
-        foto || null,
+        fotoPrincipal,
         disponivel !== undefined ? (disponivel ? 1 : 0) : 1,
         area || null, casas_banho || null,
         varanda ? 1 : 0, garagem ? 1 : 0,
         estado || null, armarios_embutidos ? 1 : 0,
         orientacao || null, cozinha_equipada ? 1 : 0,
-        aquecimento || null, tipo_edificio || null, andar || null,
+        aquecimento || null, cozinha_mobilada ? 1 : 0, tipo_edificio || null, andar || null,
         elevador ? 1 : 0, certificado_energetico || null,
         meses_caucao ? Number(meses_caucao) : null, fianca ? 1 : 0,
+        fotosJson,
+        morada || null,
+        latitude != null ? Number(latitude) : null,
+        longitude != null ? Number(longitude) : null,
         req.params.id,
       ]
     );

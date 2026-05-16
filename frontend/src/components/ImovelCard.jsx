@@ -40,6 +40,9 @@ export default function ImovelCard({ imovel, favorito = false, onToggleFavorito 
         </div>
 
         <h5 className="card-title fw-bold mb-1">{imovel.titulo}</h5>
+        <p className="text-muted mb-1" style={{ fontSize: "0.72rem", letterSpacing: "0.5px" }}>
+          Ref. AH-{String(imovel.id).padStart(6, "0")}
+        </p>
         <p className="card-text text-muted small flex-grow-1">{imovel.descricao}</p>
 
         <div className="d-flex justify-content-between align-items-center mt-3">

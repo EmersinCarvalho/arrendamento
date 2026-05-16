@@ -190,6 +190,10 @@ async function criarTabelas() {
       sql: "ALTER TABLE imoveis ADD COLUMN aquecimento VARCHAR(50) NULL AFTER cozinha_equipada",
     },
     {
+      descricao: "cozinha_mobilada em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN cozinha_mobilada TINYINT(1) NOT NULL DEFAULT 0 AFTER aquecimento",
+    },
+    {
       descricao: "tipo_edificio em imoveis",
       sql: "ALTER TABLE imoveis ADD COLUMN tipo_edificio VARCHAR(50) NULL AFTER aquecimento",
     },
@@ -216,6 +220,22 @@ async function criarTabelas() {
     {
       descricao: "fianca em imoveis",
       sql: "ALTER TABLE imoveis ADD COLUMN fianca TINYINT(1) NOT NULL DEFAULT 0 AFTER meses_caucao",
+    },
+    {
+      descricao: "fotos em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN fotos TEXT NULL AFTER fianca",
+    },
+    {
+      descricao: "morada em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN morada VARCHAR(255) NULL AFTER fotos",
+    },
+    {
+      descricao: "latitude em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN latitude DECIMAL(10,7) NULL AFTER morada",
+    },
+    {
+      descricao: "longitude em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN longitude DECIMAL(10,7) NULL AFTER latitude",
     },
   ];
 

@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const session = require("express-session");
 const passport = require("./config/passport");
 
@@ -10,6 +11,7 @@ const authRoutes = require("./routes/auth");
 const procuraRoutes = require("./routes/procura");
 const favoritosRoutes = require("./routes/favoritos");
 const avaliacoesRoutes = require("./routes/avaliacoes");
+const uploadRoutes = require("./routes/upload");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,6 +40,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/procura", procuraRoutes);
 app.use("/api/favoritos", favoritosRoutes);
 app.use("/api/avaliacoes", avaliacoesRoutes);
+app.use("/api/upload", uploadRoutes);
+
+// Servir imagens carregadas
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Rota raiz de verificação
 app.get("/", (req, res) => {
