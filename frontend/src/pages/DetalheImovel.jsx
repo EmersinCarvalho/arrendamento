@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import MapaImovel from "../components/MapaImovel";
 import { useTema } from "../context/ThemeContext";
-import { getImovelById, getAvaliacoesAnunciante, getFavoritos, adicionarFavorito, removerFavorito } from "../services/api";
-import { isAutenticado } from "../services/auth";
+import { getImovelById, getAvaliacoesAnunciante, getFavoritos, adicionarFavorito, removerFavorito, registarVisualizacao, verificarInteresse, enviarInteresse } from "../services/api";
+import { isAutenticado, getUtilizador } from "../services/auth";
 
 function GaleriaFotos({ fotos, titulo, favorito, togglingFav, onToggleFavorito }) {
   const [ativa, setAtiva] = useState(0);
@@ -217,6 +217,7 @@ function Detalhe({ icon, label, valor }) {
 
 export default function DetalheImovel() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { darkMode } = useTema();
   const [imovel, setImovel] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -226,6 +227,11 @@ export default function DetalheImovel() {
   const [favorito, setFavorito] = useState(false);
   const [togglingFav, setTogglingFav] = useState(false);
 
+  // interesse
+  const [jaEnviouInteresse, setJaEnviouInteresse] = useState(false);
+  const [aEnviarInteresse, setAEnviarInteresse] = useState(false);
+  const [interesseEnviado, setInteresseEnviado] = useState(false);
+
   useEffect(() => {
     getImovelById(id)
       .then((data) => {
@@ -234,6 +240,11 @@ export default function DetalheImovel() {
           getAvaliacoesAnunciante(data.utilizador_id)
             .then((r) => setStatsAnunciante(r.stats))
             .catch(() => {});
+        }
+        // Registar visualização — ignora se o utilizador for o dono do imóvel
+        const utilizadorAtual = getUtilizador();
+        if (!utilizadorAtual || utilizadorAtual.id !== data.utilizador_id) {
+          registarVisualizacao(id);
         }
       })
       .catch(() => setErro("Imóvel não encontrado."))
@@ -245,6 +256,11 @@ export default function DetalheImovel() {
       getFavoritos().then(ids => {
         setFavorito(ids.includes(Number(id)));
       }).catch(() => {});
+
+      const u = getUtilizador();
+      if (u?.perfil === "inquilino") {
+        verificarInteresse(id).then(({ jaEnviou }) => setJaEnviouInteresse(jaEnviou)).catch(() => {});
+      }
     }
   }, [id]);
 
@@ -255,6 +271,25 @@ export default function DetalheImovel() {
       if (favorito) { await removerFavorito(id); setFavorito(false); }
       else { await adicionarFavorito(id); setFavorito(true); }
     } finally { setTogglingFav(false); }
+  }
+
+  async function handleInteresse() {
+    if (!isAutenticado()) {
+      navigate("/login");
+      return;
+    }
+    setAEnviarInteresse(true);
+    try {
+      await enviarInteresse(id);
+      setJaEnviouInteresse(true);
+      setInteresseEnviado(true);
+    } catch (err) {
+      if (err.message === "curriculo_em_falta") {
+        navigate("/curriculo", { state: { redirectTo: `/imoveis/${id}` } });
+      }
+    } finally {
+      setAEnviarInteresse(false);
+    }
   }
 
   if (loading) return <div className="container py-5"><Loading /></div>;
@@ -324,11 +359,28 @@ export default function DetalheImovel() {
             )}
 
             {/* Condições de Entrada */}
-            {(imovel.meses_caucao || imovel.fianca) && (
+            {(imovel.meses_caucao || imovel.fianca || imovel.data_disponivel !== undefined) && (
               <div className="mt-4 p-4"
                 style={{ background: darkMode ? "#2a2200" : "#fff8e1", borderRadius: 16, border: "1.5px solid #FFC300", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
                 <h6 className="fw-bold mb-3" style={{ color: darkMode ? "#FFC300" : "#1a1a1a" }}>🔐 Condições de Entrada</h6>
                 <div className="d-flex flex-column gap-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span style={{ fontSize: "0.85rem", color: darkMode ? "#aaa" : "#6c757d" }}>🗓️ Disponibilidade</span>
+                    <span className="fw-semibold" style={{
+                      color: !imovel.data_disponivel ? "#2e7d32" : (darkMode ? "#e0e0e0" : "#1a1a1a"),
+                      background: !imovel.data_disponivel ? "rgba(46,125,50,0.12)" : "transparent",
+                      padding: !imovel.data_disponivel ? "2px 10px" : undefined,
+                      borderRadius: !imovel.data_disponivel ? 20 : undefined,
+                      fontSize: "0.9rem",
+                    }}>
+                      {imovel.data_disponivel
+                        ? new Date(imovel.data_disponivel + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" })
+                        : "✅ Entrada imediata"}
+                    </span>
+                  </div>
+                  {(imovel.meses_caucao || imovel.fianca) && (
+                    <hr style={{ borderColor: darkMode ? "#444" : "#ffe082", margin: "4px 0" }} />
+                  )}
                   {imovel.meses_caucao && (
                     <>
                       <div className="d-flex justify-content-between align-items-center">
@@ -550,9 +602,49 @@ export default function DetalheImovel() {
                 </Link>
               )}
 
-              <button className="btn btn-warning btn-lg w-100 fw-semibold">
-                Pedir informações
-              </button>
+              {/* Botão Tenho Interesse */}
+              {(() => {
+                const utilizador = getUtilizador();
+                const eDono = utilizador && imovel.utilizador_id === utilizador.id;
+                const eSenhorio = utilizador?.perfil === "senhorio";
+
+                if (eDono || eSenhorio) return null;
+
+                if (jaEnviouInteresse || interesseEnviado) {
+                  return (
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2 py-3 px-4 w-100"
+                      style={{
+                        background: "#e8f5e9",
+                        borderRadius: 12,
+                        border: "1.5px solid #a5d6a7",
+                        color: "#2e7d32",
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                      }}
+                    >
+                      ✅ Interesse enviado ao senhorio
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    className="btn btn-warning btn-lg w-100 fw-semibold"
+                    style={{ borderRadius: 12 }}
+                    onClick={handleInteresse}
+                    disabled={aEnviarInteresse}
+                  >
+                    {aEnviarInteresse ? "A enviar..." : "🤝 Tenho interesse"}
+                  </button>
+                );
+              })()}
+
+              {!isAutenticado() && (
+                <p className="text-center text-muted mt-2" style={{ fontSize: "0.8rem" }}>
+                  <Link to="/login" style={{ color: "#FFC300" }}>Inicia sessão</Link> para manifestar interesse
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -94,6 +94,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// POST /api/imoveis/:id/visualizacao - incrementa contador de visualizações
+router.post("/:id/visualizacao", async (req, res) => {
+  try {
+    await db.execute(
+      "UPDATE imoveis SET visualizacoes = visualizacoes + 1 WHERE id = ?",
+      [req.params.id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Erro em POST /api/imoveis/:id/visualizacao:", err.message);
+    res.status(500).json({ erro: "Erro ao registar visualização" });
+  }
+});
+
 // POST /api/imoveis - publicar novo imóvel (apenas senhorios)
 router.post("/", verificarToken, async (req, res) => {
   if (req.utilizador.perfil !== "senhorio") {
@@ -107,8 +121,8 @@ router.post("/", verificarToken, async (req, res) => {
     // novos campos
     area, casas_banho, varanda, garagem, estado,
     armarios_embutidos, orientacao, cozinha_equipada,
-    aquecimento, tipo_edificio, andar, elevador, certificado_energetico,
-    meses_caucao, fianca,
+    aquecimento, cozinha_mobilada, tipo_edificio, andar, elevador, certificado_energetico,
+    meses_caucao, fianca, data_disponivel,
     morada, latitude, longitude,
   } = req.body;
 
@@ -127,9 +141,9 @@ router.post("/", verificarToken, async (req, res) => {
         (utilizador_id, titulo, cidade, tipologia, preco, descricao, quartos,
          tipo_imovel, aceita_pets, mobiliado, despesas_incluidas, foto, disponivel,
          area, casas_banho, varanda, garagem, estado, armarios_embutidos, orientacao,
-         cozinha_equipada, aquecimento, tipo_edificio, andar, elevador, certificado_energetico,
-         meses_caucao, fianca, fotos, morada, latitude, longitude)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         cozinha_equipada, aquecimento, cozinha_mobilada, tipo_edificio, andar, elevador, certificado_energetico,
+         meses_caucao, fianca, data_disponivel, fotos, morada, latitude, longitude)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.utilizador.id, titulo, cidade, tipologia, preco,
         descricao || null, quartos || null, tipo_imovel || null,
@@ -138,9 +152,10 @@ router.post("/", verificarToken, async (req, res) => {
         varanda ? 1 : 0, garagem ? 1 : 0,
         estado || null, armarios_embutidos ? 1 : 0,
         orientacao || null, cozinha_equipada ? 1 : 0,
-        aquecimento || null, tipo_edificio || null, andar || null,
+        aquecimento || null, cozinha_mobilada ? 1 : 0, tipo_edificio || null, andar || null,
         elevador ? 1 : 0, certificado_energetico || null,
         meses_caucao ? Number(meses_caucao) : null, fianca ? 1 : 0,
+        data_disponivel || null,
         fotosJson,
         morada || null,
         latitude != null ? Number(latitude) : null,
@@ -174,7 +189,7 @@ router.put("/:id", verificarToken, async (req, res) => {
       area, casas_banho, varanda, garagem, estado,
       armarios_embutidos, orientacao, cozinha_equipada,
       aquecimento, cozinha_mobilada, tipo_edificio, andar, elevador, certificado_energetico,
-      meses_caucao, fianca,
+      meses_caucao, fianca, data_disponivel,
       morada, latitude, longitude,
     } = req.body;
 
@@ -191,7 +206,7 @@ router.put("/:id", verificarToken, async (req, res) => {
         area = ?, casas_banho = ?, varanda = ?, garagem = ?, estado = ?,
         armarios_embutidos = ?, orientacao = ?, cozinha_equipada = ?,
         aquecimento = ?, cozinha_mobilada = ?, tipo_edificio = ?, andar = ?, elevador = ?,
-        certificado_energetico = ?, meses_caucao = ?, fianca = ?, fotos = ?,
+        certificado_energetico = ?, meses_caucao = ?, fianca = ?, data_disponivel = ?, fotos = ?,
         morada = ?, latitude = ?, longitude = ?
        WHERE id = ?`,
       [
@@ -207,6 +222,7 @@ router.put("/:id", verificarToken, async (req, res) => {
         aquecimento || null, cozinha_mobilada ? 1 : 0, tipo_edificio || null, andar || null,
         elevador ? 1 : 0, certificado_energetico || null,
         meses_caucao ? Number(meses_caucao) : null, fianca ? 1 : 0,
+        data_disponivel || null,
         fotosJson,
         morada || null,
         latitude != null ? Number(latitude) : null,

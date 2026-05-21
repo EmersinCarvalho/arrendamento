@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ImovelCard({ imovel, favorito = false, onToggleFavorito }) {
+  const { t } = useTranslation();
   return (
-    <div className="card h-100 shadow-sm border-0 imovel-card">
+    <Link
+      to={`/imoveis/${imovel.id}`}
+      className="card h-100 shadow-sm border-0 imovel-card text-decoration-none"
+      style={{ cursor: "pointer", color: "inherit" }}
+    >
       <div className="card-img-wrapper overflow-hidden" style={{ height: "210px", position: "relative" }}>
         <img
           src={imovel.foto}
@@ -11,8 +17,8 @@ export default function ImovelCard({ imovel, favorito = false, onToggleFavorito 
         />
         {/* Botão favorito */}
         <button
-          onClick={(e) => { e.preventDefault(); onToggleFavorito && onToggleFavorito(imovel.id); }}
-          title={favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorito && onToggleFavorito(imovel.id); }}
+          title={favorito ? t("property_card.remove_favorite") : t("property_card.add_favorite")}
           style={{
             position: "absolute", top: 10, right: 10,
             background: "rgba(255,255,255,0.92)",
@@ -41,24 +47,23 @@ export default function ImovelCard({ imovel, favorito = false, onToggleFavorito 
 
         <h5 className="card-title fw-bold mb-1">{imovel.titulo}</h5>
         <p className="text-muted mb-1" style={{ fontSize: "0.72rem", letterSpacing: "0.5px" }}>
-          Ref. AH-{String(imovel.id).padStart(6, "0")}
+          {t("common.ref")} AH-{String(imovel.id).padStart(6, "0")}
         </p>
         <p className="card-text text-muted small flex-grow-1">{imovel.descricao}</p>
 
         <div className="d-flex justify-content-between align-items-center mt-3">
           <span className="fs-5 fw-bold text-success">
             {imovel.preco.toLocaleString("pt-PT")} €
-            <small className="text-muted fw-normal fs-6">/mês</small>
+            <small className="text-muted fw-normal fs-6">{t("common.per_month")}</small>
           </span>
-          <Link
-            to={`/imoveis/${imovel.id}`}
+          <span
             className="btn btn-sm px-3 fw-bold"
             style={{ background: "#1a1a1a", color: "#FFC300", borderRadius: "8px" }}
           >
-            Ver imóvel
-          </Link>
+            {t("property_card.view")}
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

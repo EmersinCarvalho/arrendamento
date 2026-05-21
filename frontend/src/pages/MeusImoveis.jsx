@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getUtilizador } from "../services/auth";
 import { getMeusImoveis, eliminarImovel } from "../services/api";
 
 export default function MeusImoveis() {
   const navigate = useNavigate();
   const utilizador = getUtilizador();
+  const { t } = useTranslation();
 
   const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,13 +34,13 @@ export default function MeusImoveis() {
   }
 
   async function handleEliminar(imovel) {
-    if (!window.confirm(`Tem a certeza que quer eliminar "${imovel.titulo}"? Esta ação não pode ser desfeita.`)) return;
+    if (!window.confirm(t("my_properties.confirm_delete", { title: imovel.titulo }))) return;
     setEliminando(imovel.id);
     try {
       await eliminarImovel(imovel.id);
       setImoveis((prev) => prev.filter((i) => i.id !== imovel.id));
     } catch (err) {
-      alert(err.message || "Erro ao eliminar imóvel.");
+      alert(err.message || t("my_properties.delete_error"));
     } finally {
       setEliminando(null);
     }
@@ -74,13 +76,13 @@ export default function MeusImoveis() {
                   fontSize: "0.7rem", letterSpacing: "1px", textTransform: "uppercase", padding: "6px 14px",
                 }}
               >
-                🔑 Área Senhorio
+                {t("my_properties.badge")}
               </div>
               <h1 className="text-white fw-bold mb-2" style={{ fontSize: "2rem" }}>
-                Os meus imóveis
+                {t("my_properties.title")}
               </h1>
               <p className="text-white-50 mb-0">
-                Gira os seus anúncios publicados na plataforma.
+                {t("my_properties.subtitle")}
               </p>
             </div>
             <Link
@@ -92,7 +94,7 @@ export default function MeusImoveis() {
                 border: "none", fontSize: "0.95rem", textDecoration: "none",
               }}
             >
-              + Publicar novo imóvel
+              + {t("my_properties.publish_btn")}
             </Link>
           </div>
         </div>
@@ -118,8 +120,8 @@ export default function MeusImoveis() {
         {!loading && !erro && imoveis.length === 0 && (
           <div className="text-center py-5">
             <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🏠</div>
-            <h4 className="fw-bold text-dark mb-2">Ainda não tem imóveis publicados</h4>
-            <p className="text-muted mb-4">Publique o seu primeiro anúncio e comece a receber contactos.</p>
+            <h4 className="fw-bold text-dark mb-2">{t("my_properties.no_properties")}</h4>
+            <p className="text-muted mb-4">{t("my_properties.publish_first")}</p>
             <Link
               to="/imoveis/publicar"
               className="btn fw-bold"
@@ -176,7 +178,7 @@ export default function MeusImoveis() {
                           fontSize: "0.75rem", fontWeight: 600,
                         }}
                       >
-                        {imovel.disponivel ? "● Disponível" : "● Indisponível"}
+                        {imovel.disponivel ? `● ${t("my_properties.active")}` : `● ${t("my_properties.inactive")}`}
                       </div>
                     </div>
 
@@ -224,7 +226,18 @@ export default function MeusImoveis() {
                         <span className="fw-bold" style={{ color: "#FFC300", fontSize: "1.2rem" }}>
                           {Number(imovel.preco).toLocaleString("pt-PT")} €/mês
                         </span>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2 align-items-center">
+                          {/* Contador de visualizações */}
+                          <span
+                            title="Visualizações do anúncio"
+                            style={{
+                              fontSize: "0.8rem", color: "#6c757d",
+                              background: "#f0f0f0", borderRadius: 20,
+                              padding: "3px 10px", display: "flex", alignItems: "center", gap: 4,
+                            }}
+                          >
+                            👁️ {imovel.visualizacoes ?? 0}
+                          </span>
                           {/* Extras pequenos */}
                           <div className="d-flex gap-1">
                             {imovel.aceita_pets ? <span title="Aceita pets" style={{ fontSize: "1rem" }}>🐾</span> : null}
@@ -265,7 +278,7 @@ export default function MeusImoveis() {
                           disabled={eliminando === imovel.id}
                           onClick={() => handleEliminar(imovel)}
                         >
-                          {eliminando === imovel.id ? "..." : "🗑️ Eliminar"}
+                          {eliminando === imovel.id ? t("my_properties.deleting") : `🗑️ ${t("my_properties.delete")}`}
                         </button>
                       </div>
                     </div>

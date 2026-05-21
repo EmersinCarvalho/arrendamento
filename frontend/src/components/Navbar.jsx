@@ -1,13 +1,40 @@
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/index.js";
 import { getUtilizador, logout } from "../services/auth";
 import { useTema } from "../context/ThemeContext";
 import logo from "../assets/logo.png";
+import flagPT from "../assets/flags/pt.svg";
+import flagGB from "../assets/flags/gb.svg";
+import flagES from "../assets/flags/es.svg";
+import flagFR from "../assets/flags/fr.svg";
+import flagDE from "../assets/flags/de.svg";
+import flagIT from "../assets/flags/it.svg";
+
+const IDIOMAS = [
+  { code: "pt", label: "Português", flag: flagPT },
+  { code: "en", label: "English",   flag: flagGB },
+  { code: "es", label: "Español",   flag: flagES },
+  { code: "fr", label: "Français",  flag: flagFR },
+  { code: "de", label: "Deutsch",   flag: flagDE },
+  { code: "it", label: "Italiano",  flag: flagIT },
+];
 
 export default function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const utilizador = getUtilizador();
   const { darkMode, setDarkMode } = useTema();
+  const { t } = useTranslation();
+  const [idioma, setIdioma] = useState(() => localStorage.getItem("ah_idioma") || "pt");
+  const idiomaAtual = IDIOMAS.find((i) => i.code === idioma) || IDIOMAS[0];
+
+  function handleChangeLanguage(code) {
+    setIdioma(code);
+    localStorage.setItem("ah_idioma", code);
+    i18n.changeLanguage(code);
+  }
 
   function handleLogout() {
     logout();
@@ -44,7 +71,7 @@ export default function Navbar() {
                 className={`nav-link px-3 ${pathname === "/" ? "active fw-semibold" : ""}`}
                 to="/"
               >
-                Início
+                {t("nav.home")}
               </Link>
             </li>
             <li className="nav-item">
@@ -52,7 +79,7 @@ export default function Navbar() {
                 className={`nav-link px-3 ${pathname === "/imoveis" ? "active fw-semibold" : ""}`}
                 to="/imoveis"
               >
-                Imóveis
+                {t("nav.properties")}
               </Link>
             </li>
           </ul>
@@ -62,7 +89,7 @@ export default function Navbar() {
             <button
               onClick={() => setDarkMode((d) => !d)}
               className="btn btn-sm"
-              title={darkMode ? "Mudar para modo claro" : "Mudar para modo noturno"}
+              title={darkMode ? t("nav.day_mode") : t("nav.night_mode")}
               style={{
                 background: darkMode ? "rgba(255,195,0,0.15)" : "rgba(255,255,255,0.1)",
                 border: "none",
@@ -139,15 +166,15 @@ export default function Navbar() {
 
                   {/* Item helper */}
                   {[
-                    { to: "/perfil", icon: "⚙️", label: "O meu perfil", sub: "Editar dados pessoais", color: "#FFC300" },
-                    { to: "/favoritos", icon: "❤️", label: "Favoritos", sub: "Imóveis guardados", color: "#ff4d6d" },
+                    { to: "/perfil", icon: "⚙️", label: t("nav.my_profile"), sub: t("nav.edit_profile"), color: "#FFC300" },
+                    { to: "/favoritos", icon: "❤️", label: t("nav.favorites"), sub: t("nav.saved_properties"), color: "#ff4d6d" },
                     ...(utilizador.perfil === "inquilino" ? [
-                      { to: "/setup-procura", icon: "🔍", label: "Preferências de procura", sub: "O que procuro", color: "#4361ee" },
-                      { to: "/descobrir", icon: "✨", label: "Descobrir imóveis", sub: "Sugestões para si", color: "#7209b7" },
+                      { to: "/curriculo", icon: "📄", label: t("nav.real_estate_cv"), sub: t("nav.my_cv"), color: "#2e7d32" },
                     ] : []),
                     ...(utilizador.perfil === "senhorio" ? [
-                      { to: "/meus-imoveis", icon: "🏠", label: "Os meus imóveis", sub: "Gerir anúncios", color: "#2196f3" },
-                      { to: "/imoveis/publicar", icon: "➕", label: "Publicar imóvel", sub: "Novo anúncio", color: "#43a047" },
+                      { to: "/meus-imoveis", icon: "🏠", label: t("nav.my_properties"), sub: t("nav.manage_listings"), color: "#2196f3" },
+                      { to: "/imoveis/publicar", icon: "➕", label: t("nav.publish_property"), sub: t("nav.new_listing"), color: "#43a047" },
+                      { to: "/candidaturas", icon: "📋", label: t("nav.received_applications"), sub: t("nav.tenant_cvs"), color: "#e65100" },
                     ] : []),
                   ].map(({ to, icon, label, sub, color }) => (
                     <li key={to}>
@@ -182,8 +209,8 @@ export default function Navbar() {
                         🚪
                       </span>
                       <div>
-                        <div style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>Sair</div>
-                        <div style={{ fontSize: "0.73rem", color: "#aaa" }}>Terminar sessão</div>
+                        <div style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>{t("nav.logout")}</div>
+                        <div style={{ fontSize: "0.73rem", color: "#aaa" }}>{t("nav.end_session")}</div>
                       </div>
                     </button>
                   </li>
@@ -196,15 +223,69 @@ export default function Navbar() {
                   to="/login"
                   className="btn btn-outline-light btn-sm px-3 fw-semibold"
                 >
-                  Entrar
+                  {t("nav.login")}
                 </Link>
                 <Link
                   to="/login"
                   className="btn btn-sm px-3 fw-bold"
                   style={{ background: "#FFC300", color: "#1a1a1a" }}
                 >
-                  Registar
+                  {t("nav.register")}
                 </Link>
+
+                {/* Seletor de idioma */}
+                <div className="dropdown">
+                  <button
+                    className="btn btn-sm d-flex align-items-center gap-1"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title={t("nav.select_language")}
+                    style={{
+                      background: "rgba(255,255,255,0.1)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      borderRadius: "20px",
+                      padding: "4px 10px",
+                      color: "#fff",
+                    }}
+                  >
+                    <img
+                      src={idiomaAtual.flag}
+                      alt={idiomaAtual.label}
+                      style={{ width: 21, height: 15, objectFit: "cover", borderRadius: 2 }}
+                    />
+                    <span className="d-none d-sm-inline" style={{ fontSize: "0.8rem" }}>
+                      {idiomaAtual.code.toUpperCase()}
+                    </span>
+                    <span style={{ fontSize: "0.55rem", opacity: 0.7 }}>▾</span>
+                  </button>
+                  <ul
+                    className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2"
+                    style={{ minWidth: 165, borderRadius: 12 }}
+                  >
+                    {IDIOMAS.map(({ code, label, flag }) => (
+                      <li key={code}>
+                        <button
+                          className="dropdown-item rounded-3 d-flex align-items-center gap-2 py-2"
+                          onClick={() => handleChangeLanguage(code)}
+                          style={{
+                            background: idioma === code ? "rgba(255,195,0,0.12)" : "",
+                            fontWeight: idioma === code ? "600" : "400",
+                          }}
+                        >
+                          <img
+                            src={flag}
+                            alt={label}
+                            style={{ width: 22, height: 15, objectFit: "cover", borderRadius: 2 }}
+                          />
+                          <span style={{ fontSize: "0.88rem" }}>{label}</span>
+                          {idioma === code && (
+                            <span className="ms-auto" style={{ color: "#FFC300", fontSize: "0.8rem" }}>✓</span>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </>
             )}
           </div>

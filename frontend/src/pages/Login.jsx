@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import logo from "../assets/logo.png";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function Login() {
-  const [perfil, setPerfil] = useState(null); // null | 'inquilino' | 'senhorio'
-  const [modo, setModo] = useState("entrar"); // 'entrar' | 'registar'
+  const { t } = useTranslation();
+  const [perfil, setPerfil] = useState(null);
+  const [modo, setModo] = useState("entrar");
 
   return (
     <div className="login-page">
@@ -18,9 +20,9 @@ export default function Login() {
             <div className="text-center mb-5">
               <img src={logo} alt="ArrendaHouse" style={{ height: 80, objectFit: "contain", marginBottom: "1.2rem" }} />
               <h1 className="fw-bold mb-2" style={{ fontSize: "2.2rem" }}>
-                Bem-vindo ao <span style={{ color: "#FFC300" }}>ArrendaHouse</span>
+                {t("login.welcome")} <span style={{ color: "#FFC300" }}>ArrendaHouse</span>
               </h1>
-              <p className="text-muted">Selecione o seu perfil para continuar</p>
+              <p className="text-muted">{t("login.select_profile")}</p>
             </div>
 
             <div className="row g-4 justify-content-center">
@@ -36,11 +38,11 @@ export default function Login() {
                     alt="Google"
                     style={{ width: 22, height: 22 }}
                   />
-                  Entrar com Google
+                  {t("login.google_login")}
                 </a>
                 <div className="d-flex align-items-center gap-3 mt-4 mb-2" style={{ maxWidth: 420, margin: "1rem auto 0" }}>
                   <hr style={{ flex: 1, borderColor: "rgba(255,255,255,0.15)" }} />
-                  <span className="text-muted small">ou continue com email</span>
+                  <span className="text-muted small">{t("login.or_email")}</span>
                   <hr style={{ flex: 1, borderColor: "rgba(255,255,255,0.15)" }} />
                 </div>
               </div>
@@ -54,15 +56,15 @@ export default function Login() {
                   onClick={() => setPerfil("inquilino")}
                 >
                   <div className="option-icon">🏠</div>
-                  <h3 className="fw-bold mb-2">Sou Inquilino</h3>
+                  <h3 className="fw-bold mb-2">{t("login.tenant_title")}</h3>
                   <p style={{ color: "rgba(255,255,255,0.7)" }} className="mb-4">
-                    Quero encontrar um imóvel para arrendar perto de mim.
+                    {t("login.tenant_desc")}
                   </p>
                   <div
                     className="btn w-100 fw-bold py-3"
                     style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px" }}
                   >
-                    Continuar como Inquilino →
+                    {t("login.tenant_btn")}
                   </div>
                 </div>
               </div>
@@ -74,22 +76,22 @@ export default function Login() {
                   onClick={() => setPerfil("senhorio")}
                 >
                   <div className="option-icon">🔑</div>
-                  <h3 className="fw-bold mb-2">Sou Senhorio</h3>
+                  <h3 className="fw-bold mb-2">{t("login.landlord_title")}</h3>
                   <p style={{ color: "rgba(26,26,26,0.65)" }} className="mb-4">
-                    Tenho um imóvel para arrendar e quero publicar o meu anúncio.
+                    {t("login.landlord_desc")}
                   </p>
                   <div
                     className="btn w-100 fw-bold py-3"
                     style={{ background: "#1a1a1a", color: "#FFC300", borderRadius: "10px" }}
                   >
-                    Continuar como Senhorio →
+                    {t("login.landlord_btn")}
                   </div>
                 </div>
               </div>
             </div>
 
             <p className="text-center text-muted mt-4 small">
-              Ao entrar, concorda com os nossos Termos de Serviço e Política de Privacidade.
+              {t("login.terms")}
             </p>
           </>
         )}
@@ -104,12 +106,12 @@ export default function Login() {
                   {perfil === "inquilino" ? "🏠" : "🔑"}
                 </div>
                 <h2 className="fw-bold mb-1" style={{ fontSize: "1.8rem" }}>
-                  {perfil === "inquilino" ? "Inquilino" : "Senhorio"}
+                  {perfil === "inquilino" ? t("login.tenant_title") : t("login.landlord_title")}
                 </h2>
                 <p className="text-muted small">
                   {perfil === "inquilino"
-                    ? "Aceda à sua conta ou crie uma nova para encontrar o seu lar."
-                    : "Aceda à sua conta ou crie uma nova para gerir os seus imóveis."}
+                    ? t("login.tenant_form_subtitle")
+                    : t("login.landlord_form_subtitle")}
                 </p>
               </div>
 
@@ -129,7 +131,7 @@ export default function Login() {
                   }}
                   onClick={() => setModo("entrar")}
                 >
-                  Entrar
+                  {t("login.tab_login")}
                 </button>
                 <button
                   className="btn w-50 fw-semibold py-2"
@@ -142,7 +144,7 @@ export default function Login() {
                   }}
                   onClick={() => setModo("registar")}
                 >
-                  Registar
+                  {t("login.tab_register")}
                 </button>
               </div>
 
@@ -162,30 +164,30 @@ export default function Login() {
                     alt="Google"
                     style={{ width: 20, height: 20 }}
                   />
-                  Entrar com Google
+                  {t("login.google_login")}
                 </a>
 
                 <div className="d-flex align-items-center gap-2 mb-3">
                   <hr style={{ flex: 1 }} />
-                  <span className="text-muted small">ou com email</span>
+                  <span className="text-muted small">{t("login.or_email_short")}</span>
                   <hr style={{ flex: 1 }} />
                 </div>
 
                 <form onSubmit={(e) => e.preventDefault()}>
                   {modo === "registar" && (
                     <div className="mb-3">
-                      <label className="form-label fw-semibold small">Nome completo</label>
+                      <label className="form-label fw-semibold small">{t("login.full_name")}</label>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="O seu nome"
+                        placeholder={t("login.name_placeholder")}
                         style={{ borderRadius: "10px", padding: "0.75rem 1rem" }}
                       />
                     </div>
                   )}
 
                   <div className="mb-3">
-                    <label className="form-label fw-semibold small">Email</label>
+                    <label className="form-label fw-semibold small">{t("login.email_label")}</label>
                     <input
                       type="email"
                       className="form-control"
@@ -195,7 +197,7 @@ export default function Login() {
                   </div>
 
                   <div className="mb-4">
-                    <label className="form-label fw-semibold small">Password</label>
+                    <label className="form-label fw-semibold small">{t("login.password_label")}</label>
                     <input
                       type="password"
                       className="form-control"
@@ -214,14 +216,14 @@ export default function Login() {
                       fontSize: "1rem",
                     }}
                   >
-                    {modo === "entrar" ? "Entrar na conta" : "Criar conta"}
+                    {modo === "entrar" ? t("login.login_btn") : t("login.register_btn")}
                   </button>
                 </form>
 
                 {modo === "entrar" && (
                   <p className="text-center text-muted small mt-3 mb-0">
                     <a href="#" style={{ color: "#FFC300", textDecoration: "none" }}>
-                      Esqueceu a password?
+                      {t("login.forgot_password")}
                     </a>
                   </p>
                 )}
@@ -233,7 +235,7 @@ export default function Login() {
                   className="btn btn-link text-muted small text-decoration-none"
                   onClick={() => setPerfil(null)}
                 >
-                  ← Escolher outro perfil
+                  {t("login.back_profile")}
                 </button>
               </div>
             </div>

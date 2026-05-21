@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
 import { getImoveis, getFavoritos, adicionarFavorito, removerFavorito } from "../services/api";
@@ -12,6 +13,7 @@ export default function Imoveis() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const utilizador = getUtilizador();
+  const { t } = useTranslation();
 
   const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,23 +79,23 @@ export default function Imoveis() {
 
   return (
     <div className="container py-5">
-      <h2 className="fw-bold mb-1">Imóveis disponíveis</h2>
+      <h2 className="fw-bold mb-1">{t("properties.title")}</h2>
       <p className="text-muted mb-4">
-        {imoveis.length} imóvel(is) encontrado(s)
+        {t("properties.found_other", { count: imoveis.length })}
       </p>
 
       {/* Filtros */}
       <div className="row g-3 mb-4 align-items-end">
         <div className="col-12 col-sm-6 col-md-4">
           <label className="form-label fw-semibold small text-uppercase text-muted">
-            Cidade
+            {t("properties.city_label")}
           </label>
           <select
             className="form-select"
             value={cidadeFiltro}
             onChange={(e) => setFiltro("cidade", e.target.value)}
           >
-            <option value="">Todas as cidades</option>
+            <option value="">{t("properties.all_cities")}</option>
             {CIDADES.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -104,14 +106,14 @@ export default function Imoveis() {
 
         <div className="col-12 col-sm-6 col-md-4">
           <label className="form-label fw-semibold small text-uppercase text-muted">
-            Tipologia
+            {t("properties.typology_label")}
           </label>
           <select
             className="form-select"
             value={tipologiaFiltro}
             onChange={(e) => setFiltro("tipologia", e.target.value)}
           >
-            <option value="">Todas as tipologias</option>
+            <option value="">{t("properties.all_typologies")}</option>
             {TIPOLOGIAS.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -125,7 +127,7 @@ export default function Imoveis() {
             className="btn btn-outline-secondary w-100"
             onClick={limparFiltros}
           >
-            Limpar filtros
+            {t("properties.clear_filters")}
           </button>
         </div>
       </div>
@@ -140,9 +142,9 @@ export default function Imoveis() {
 
       {!loading && !erro && imoveis.length === 0 && (
         <div className="text-center py-5">
-          <p className="text-muted fs-5">Nenhum imóvel encontrado com os filtros aplicados.</p>
+          <p className="text-muted fs-5">{t("properties.no_results")}</p>
           <button className="btn btn-dark mt-2" onClick={limparFiltros}>
-            Limpar filtros
+            {t("properties.clear_filters")}
           </button>
         </div>
       )}

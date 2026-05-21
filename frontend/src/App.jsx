@@ -9,13 +9,13 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "./pages/AuthCallback";
 import PerfilSetup from "./pages/PerfilSetup";
-import SetupProcura from "./pages/SetupProcura";
-import SwipeImoveis from "./pages/SwipeImoveis";
 import Perfil from "./pages/Perfil";
 import PublicarImovel from "./pages/PublicarImovel";
 import MeusImoveis from "./pages/MeusImoveis";
 import Favoritos from "./pages/Favoritos";
 import PerfilAnunciante from "./pages/PerfilAnunciante";
+import CurriculoInquilino from "./pages/CurriculoInquilino";
+import CandidaturasRecebidas from "./pages/CandidaturasRecebidas";
 
 export default function App() {
   return (
@@ -37,9 +37,9 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/perfil/setup" element={<PerfilSetup />} />
-            <Route path="/setup-procura" element={<SetupProcura />} />
-            <Route path="/descobrir" element={<SwipeImoveis />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/curriculo" element={<CurriculoInquilino />} />
+            <Route path="/candidaturas" element={<CandidaturasRecebidas />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

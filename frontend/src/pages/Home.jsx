@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
 import { getImoveis } from "../services/api";
@@ -8,39 +9,25 @@ import HomeLogado from "./HomeLogado";
 
 const CIDADES = ["Lisboa", "Porto", "Braga", "Coimbra", "Faro", "Cascais"];
 
-const COMO_FUNCIONA = [
-  {
-    numero: "1",
-    icon: "🔍",
-    titulo: "Pesquise",
-    descricao: "Filtre por cidade, tipologia e preço. Encontre o imóvel certo em segundos.",
-  },
-  {
-    numero: "2",
-    icon: "📋",
-    titulo: "Compare",
-    descricao: "Veja fotos, detalhes e preços. Compare as melhores opções disponíveis.",
-  },
-  {
-    numero: "3",
-    icon: "🤝",
-    titulo: "Contacte",
-    descricao: "Entre em contacto com o senhorio diretamente e marque uma visita.",
-  },
-];
-
 export default function Home() {
   const utilizador = getUtilizador();
+  const { t } = useTranslation();
   const [imoveis, setImoveis] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   const [pesquisa, setPesquisa] = useState("");
   const [tipologia, setTipologia] = useState("");
 
+  const COMO_FUNCIONA = [
+    { numero: "1", icon: "🔍", titulo: t("home.step1_title"), descricao: t("home.step1_desc") },
+    { numero: "2", icon: "📋", titulo: t("home.step2_title"), descricao: t("home.step2_desc") },
+    { numero: "3", icon: "🤝", titulo: t("home.step3_title"), descricao: t("home.step3_desc") },
+  ];
+
   useEffect(() => {
     getImoveis()
       .then(setImoveis)
-      .catch(() => setErro("Não foi possível carregar os imóveis."))
+      .catch(() => setErro(t("properties.load_error")))
       .finally(() => setLoading(false));
   }, []);
 
@@ -59,41 +46,40 @@ export default function Home() {
           <div className="row align-items-center g-5">
             {/* Texto */}
             <div className="col-12 col-lg-6">
-              <div className="hero-tag">🏠 Plataforma de Arrendamento Imobiliário</div>
+              <div className="hero-tag">🏠 {t("home.tag")}</div>
               <h1 className="hero-title mb-4">
-                Encontre o seu<br />
-                próximo lar com<br />
+                {t("home.hero_title_1")}<br />
+                {t("home.hero_title_2")}<br />
                 <span className="highlight">ArrendaHouse</span>
               </h1>
               <p className="hero-subtitle mb-5">
-                A forma mais simples de encontrar ou publicar imóveis para arrendamento.
-                Senhorios e inquilinos numa só plataforma, rápida e de confiança.
+                {t("home.hero_subtitle")}
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <Link to="/imoveis" className="btn btn-brand btn-lg">
-                  Explorar imóveis
+                  {t("home.explore_btn")}
                 </Link>
                 <Link to="/login" className="btn btn-brand-outline btn-lg">
-                  Publicar imóvel
+                  {t("home.publish_btn")}
                 </Link>
               </div>
               {/* Stats */}
               <div className="hero-stats d-flex gap-4 mt-5 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                 <div className="stat-item">
                   <div className="stat-number">500+</div>
-                  <div className="stat-label">Imóveis</div>
+                  <div className="stat-label">{t("home.stat_properties")}</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-number">12k+</div>
-                  <div className="stat-label">Utilizadores</div>
+                  <div className="stat-label">{t("home.stat_users")}</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-number">20</div>
-                  <div className="stat-label">Cidades</div>
+                  <div className="stat-label">{t("home.stat_cities")}</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-number">98%</div>
-                  <div className="stat-label">Satisfação</div>
+                  <div className="stat-label">{t("home.stat_satisfaction")}</div>
                 </div>
               </div>
             </div>
@@ -102,13 +88,13 @@ export default function Home() {
             <div className="col-12 col-lg-5 offset-lg-1">
               <div className="hero-search-wrap">
                 <p className="text-white fw-semibold mb-3 small text-uppercase" style={{ letterSpacing: "1px", color: "rgba(255,255,255,0.6) !important" }}>
-                  Pesquisa rápida
+                  {t("home.quick_search")}
                 </p>
                 <div className="d-flex flex-column gap-3">
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Cidade (ex: Lisboa, Porto...)"
+                    placeholder={t("home.city_placeholder")}
                     value={pesquisa}
                     onChange={(e) => setPesquisa(e.target.value)}
                   />
@@ -117,7 +103,7 @@ export default function Home() {
                     value={tipologia}
                     onChange={(e) => setTipologia(e.target.value)}
                   >
-                    <option value="">Tipologia</option>
+                    <option value="">{t("home.typology")}</option>
                     {["T0", "T1", "T2", "T3", "T4"].map((t) => (
                       <option key={t} value={t}>{t}</option>
                     ))}
@@ -126,7 +112,7 @@ export default function Home() {
                     to={`/imoveis?cidade=${pesquisa}&tipologia=${tipologia}`}
                     className="btn btn-brand w-100 py-3"
                   >
-                    🔍 Pesquisar imóveis
+                    {t("home.search_btn")}
                   </Link>
                 </div>
                 <div className="mt-3 d-flex flex-wrap gap-2">
@@ -151,10 +137,10 @@ export default function Home() {
       <section className="section-como-funciona">
         <div className="container">
           <div className="text-center mb-5">
-            <div className="section-label">Simples e rápido</div>
-            <h2 className="section-title mb-3">Como funciona?</h2>
+            <div className="section-label">{t("home.how_it_works_label")}</div>
+            <h2 className="section-title mb-3">{t("home.how_it_works_title")}</h2>
             <p className="section-subtitle">
-              Em apenas 3 passos encontra o imóvel ideal para si ou publica o seu para arrendar.
+              {t("home.how_it_works_subtitle")}
             </p>
           </div>
           <div className="row g-4 justify-content-center">

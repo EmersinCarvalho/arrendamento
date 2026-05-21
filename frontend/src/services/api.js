@@ -27,6 +27,12 @@ export async function getImovelById(id) {
   return response.json();
 }
 
+export async function registarVisualizacao(id) {
+  try {
+    await fetch(`${API_URL}/imoveis/${id}/visualizacao`, { method: "POST" });
+  } catch { /* silencioso */ }
+}
+
 export async function getMeusImoveis() {
   const response = await fetch(`${API_URL}/imoveis/meus`, {
     headers: authHeaders(),
@@ -136,6 +142,12 @@ export async function eliminarAvaliacao(utilizadorId) {
   return json;
 }
 
+export async function getMe() {
+  const response = await fetch(`${API_URL}/auth/me`, { headers: authHeaders() });
+  if (!response.ok) return null;
+  return response.json();
+}
+
 export async function atualizarContactos(dados) {
   const response = await fetch(`${API_URL}/auth/contactos`, {
     method: "PUT",
@@ -145,4 +157,60 @@ export async function atualizarContactos(dados) {
   const json = await response.json();
   if (!response.ok) throw new Error(json.erro || "Erro ao atualizar contactos");
   return json;
+}
+
+// ── Currículo Imobiliário ────────────────────────────────────────
+
+export async function getCurriculo() {
+  const response = await fetch(`${API_URL}/candidaturas/curriculo`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) return null;
+  return response.json();
+}
+
+export async function guardarCurriculo(dados) {
+  const response = await fetch(`${API_URL}/candidaturas/curriculo`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(dados),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao guardar currículo");
+  return json;
+}
+
+// ── Candidaturas / Interesse ─────────────────────────────────────
+
+export async function verificarInteresse(imovelId) {
+  const response = await fetch(`${API_URL}/candidaturas/imovel/${imovelId}/estado`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) return { jaEnviou: false };
+  return response.json();
+}
+
+export async function enviarInteresse(imovelId) {
+  const response = await fetch(`${API_URL}/candidaturas/imovel/${imovelId}`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.erro || "Erro ao enviar interesse");
+  return json;
+}
+
+export async function getCandidaturasRecebidas() {
+  const response = await fetch(`${API_URL}/candidaturas/recebidas`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) throw new Error("Erro ao carregar candidaturas");
+  return response.json();
+}
+
+export async function marcarCandidaturaLida(candidaturaId) {
+  await fetch(`${API_URL}/candidaturas/${candidaturaId}/lida`, {
+    method: "PATCH",
+    headers: authHeaders(),
+  });
 }

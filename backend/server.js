@@ -12,6 +12,7 @@ const procuraRoutes = require("./routes/procura");
 const favoritosRoutes = require("./routes/favoritos");
 const avaliacoesRoutes = require("./routes/avaliacoes");
 const uploadRoutes = require("./routes/upload");
+const candidaturasRoutes = require("./routes/candidaturas");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -41,6 +42,7 @@ app.use("/api/procura", procuraRoutes);
 app.use("/api/favoritos", favoritosRoutes);
 app.use("/api/avaliacoes", avaliacoesRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/candidaturas", candidaturasRoutes);
 
 // Servir imagens carregadas
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

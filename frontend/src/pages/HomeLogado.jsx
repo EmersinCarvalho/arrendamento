@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
 import { getImoveis } from "../services/api";
@@ -13,6 +14,7 @@ export default function HomeLogado({ utilizador }) {
   const [pesquisa, setPesquisa] = useState("");
   const [tipologia, setTipologia] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const isSenhorio = utilizador.perfil === "senhorio";
 
@@ -93,19 +95,17 @@ export default function HomeLogado({ utilizador }) {
                       padding: "4px 10px",
                     }}
                   >
-                    {isSenhorio ? "🔑 Senhorio" : "🏠 Inquilino"}
+                    {isSenhorio ? t("home_logged.landlord_badge") : t("home_logged.tenant_badge")}
                   </div>
                   <div className="text-white-50 small">{utilizador.email}</div>
                 </div>
               </div>
 
               <h1 className="fw-bold text-white mb-2" style={{ fontSize: "2.4rem", lineHeight: 1.2 }}>
-                Olá, <span style={{ color: "#FFC300" }}>{primeiroNome}</span>!
+                {t("home_logged.greeting")} <span style={{ color: "#FFC300" }}>{primeiroNome}</span>!
               </h1>
               <p className="mb-4" style={{ color: "rgba(255,255,255,0.6)", fontSize: "1.1rem" }}>
-                {isSenhorio
-                  ? "Gira os seus imóveis, veja contactos de inquilinos e publique novos anúncios."
-                  : "Encontre o seu próximo lar. Explore imóveis por cidade, tipologia ou preço."}
+                {isSenhorio ? t("home_logged.landlord_subtitle") : t("home_logged.tenant_subtitle")}
               </p>
 
               <div className="d-flex flex-wrap gap-3">
@@ -116,38 +116,31 @@ export default function HomeLogado({ utilizador }) {
                       className="btn btn-lg fw-bold"
                       style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px" }}
                     >
-                      + Publicar imóvel
+                      {t("home_logged.publish_property")}
                     </Link>
                     <Link
-                      to="/painel"
+                      to="/meus-imoveis"
                       className="btn btn-lg fw-semibold"
                       style={{ background: "rgba(255,255,255,0.08)", color: "#fff", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}
                     >
-                      Ver painel
+                      {t("home_logged.view_panel")}
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link
-                      to="/descobrir"
+                      to="/imoveis"
                       className="btn btn-lg fw-bold"
                       style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px" }}
                     >
-                      ✨ Descobrir imóveis
-                    </Link>
-                    <Link
-                      to="/imoveis"
-                      className="btn btn-lg fw-semibold"
-                      style={{ background: "rgba(255,255,255,0.08)", color: "#fff", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}
-                    >
-                      🔍 Explorar lista
+                      {t("home_logged.explore_properties")}
                     </Link>
                     <Link
                       to="/favoritos"
                       className="btn btn-lg fw-semibold"
-                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.1)" }}
+                      style={{ background: "rgba(255,255,255,0.08)", color: "#fff", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.15)" }}
                     >
-                      ♥ Favoritos
+                      {t("home_logged.favorites")}
                     </Link>
                   </>
                 )}
@@ -166,13 +159,13 @@ export default function HomeLogado({ utilizador }) {
                   }}
                 >
                   <p className="text-white fw-semibold mb-3 small text-uppercase" style={{ letterSpacing: "1px", color: "rgba(255,255,255,0.5)" }}>
-                    Pesquisa rápida
+                    {t("home_logged.quick_search")}
                   </p>
                   <div className="d-flex flex-column gap-3">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Cidade (ex: Lisboa, Porto...)"
+                      placeholder={t("home_logged.city_placeholder")}
                       value={pesquisa}
                       onChange={(e) => setPesquisa(e.target.value)}
                       style={{ borderRadius: "10px", padding: "0.8rem 1rem" }}
@@ -183,7 +176,7 @@ export default function HomeLogado({ utilizador }) {
                       onChange={(e) => setTipologia(e.target.value)}
                       style={{ borderRadius: "10px", padding: "0.8rem 1rem" }}
                     >
-                      <option value="">Qualquer tipologia</option>
+                      <option value="">{t("home_logged.any_typology")}</option>
                       {["T0", "T1", "T2", "T3", "T4"].map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
@@ -193,7 +186,7 @@ export default function HomeLogado({ utilizador }) {
                       className="btn fw-bold py-3"
                       style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px", fontSize: "1rem" }}
                     >
-                      Pesquisar
+                      {t("home_logged.search")}
                     </Link>
                   </div>
                   <div className="mt-3 d-flex flex-wrap gap-2">
@@ -217,10 +210,10 @@ export default function HomeLogado({ utilizador }) {
                 // Cards de ações rápidas para senhorio
                 <div className="row g-3">
                   {[
-                    { icon: "🏠", label: "Os meus imóveis", sub: "Gira os seus anúncios", href: "/painel" },
-                    { icon: "📩", label: "Contactos", sub: "Mensagens de inquilinos", href: "/painel/contactos" },
-                    { icon: "📊", label: "Estatísticas", sub: "Visualizações e interesse", href: "/painel/stats" },
-                    { icon: "⚙️", label: "Conta", sub: "Perfil e definições", href: "/perfil" },
+                    { icon: "🏠", label: t("home_logged.my_properties_label"), sub: t("home_logged.manage_listings"), href: "/meus-imoveis" },
+                    { icon: "📩", label: t("home_logged.applications"), sub: t("home_logged.tenant_cvs"), href: "/candidaturas" },
+                    { icon: "➕", label: t("home_logged.publish_new"), sub: t("home_logged.new_listing"), href: "/imoveis/publicar" },
+                    { icon: "⚙️", label: t("home_logged.account"), sub: t("home_logged.profile_settings"), href: "/perfil" },
                   ].map((item) => (
                     <div className="col-6" key={item.label}>
                       <Link
@@ -259,12 +252,12 @@ export default function HomeLogado({ utilizador }) {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
               <div className="section-label">
-                {isSenhorio ? "Disponíveis na plataforma" : "Recém adicionados"}
+                {isSenhorio ? t("home_logged.platform_available") : t("home_logged.recently_added")}
               </div>
-              <h2 className="section-title mb-0">Imóveis em destaque</h2>
+              <h2 className="section-title mb-0">{t("home_logged.featured_properties")}</h2>
             </div>
             <Link to="/imoveis" className="btn fw-bold px-4" style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "8px" }}>
-              Ver todos
+              {t("home_logged.see_all")}
             </Link>
           </div>
 
@@ -272,7 +265,7 @@ export default function HomeLogado({ utilizador }) {
           {!loading && imoveis.length === 0 && (
             <div className="text-center py-5">
               <div style={{ fontSize: "3rem" }}>🏠</div>
-              <p className="text-muted mt-2">Nenhum imóvel disponível de momento.</p>
+              <p className="text-muted mt-2">{t("home_logged.no_properties")}</p>
             </div>
           )}
           {!loading && imoveis.length > 0 && (

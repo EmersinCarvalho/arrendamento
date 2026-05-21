@@ -82,6 +82,41 @@ async function criarTabelas() {
       `,
     },
     {
+      nome: "curriculo_imobiliario",
+      sql: `
+        CREATE TABLE IF NOT EXISTS curriculo_imobiliario (
+          id                     INT AUTO_INCREMENT PRIMARY KEY,
+          utilizador_id          INT          NOT NULL UNIQUE,
+          situacao_profissional  VARCHAR(80)  NULL,
+          tipo_contrato          VARCHAR(80)  NULL,
+          profissao              VARCHAR(100) NULL,
+          rendimento_mensal      DECIMAL(10,2) NULL,
+          num_pessoas            INT          NULL,
+          tem_animais            TINYINT(1)   NOT NULL DEFAULT 0,
+          duracao_pretendida     VARCHAR(50)  NULL,
+          referencias            TEXT         NULL,
+          sobre_mim              TEXT         NULL,
+          atualizado_em          TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `,
+    },
+    {
+      nome: "candidaturas",
+      sql: `
+        CREATE TABLE IF NOT EXISTS candidaturas (
+          id            INT AUTO_INCREMENT PRIMARY KEY,
+          inquilino_id  INT NOT NULL,
+          imovel_id     INT NOT NULL,
+          lida          TINYINT(1) NOT NULL DEFAULT 0,
+          criado_em     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_candidatura (inquilino_id, imovel_id),
+          FOREIGN KEY (inquilino_id) REFERENCES utilizadores(id) ON DELETE CASCADE,
+          FOREIGN KEY (imovel_id)    REFERENCES imoveis(id)      ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `,
+    },
+    {
       nome: "perfil_procura",
       sql: `
         CREATE TABLE IF NOT EXISTS perfil_procura (
@@ -230,8 +265,12 @@ async function criarTabelas() {
       sql: "ALTER TABLE imoveis ADD COLUMN fianca TINYINT(1) NOT NULL DEFAULT 0 AFTER meses_caucao",
     },
     {
+      descricao: "data_disponivel em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN data_disponivel DATE NULL AFTER fianca",
+    },
+    {
       descricao: "fotos em imoveis",
-      sql: "ALTER TABLE imoveis ADD COLUMN fotos TEXT NULL AFTER fianca",
+      sql: "ALTER TABLE imoveis ADD COLUMN fotos TEXT NULL AFTER data_disponivel",
     },
     {
       descricao: "morada em imoveis",
@@ -244,6 +283,14 @@ async function criarTabelas() {
     {
       descricao: "longitude em imoveis",
       sql: "ALTER TABLE imoveis ADD COLUMN longitude DECIMAL(10,7) NULL AFTER latitude",
+    },
+    {
+      descricao: "visualizacoes em imoveis",
+      sql: "ALTER TABLE imoveis ADD COLUMN visualizacoes INT NOT NULL DEFAULT 0 AFTER longitude",
+    },
+    {
+      descricao: "tipo_contrato em curriculo_imobiliario",
+      sql: "ALTER TABLE curriculo_imobiliario ADD COLUMN tipo_contrato VARCHAR(80) NULL AFTER situacao_profissional",
     },
   ];
 

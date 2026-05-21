@@ -44,6 +44,7 @@ const FORM_INICIAL = {
   certificado_energetico: "",
   meses_caucao: "",
   fianca: false,
+  data_disponivel: "",
   morada: "",
   latitude: null,
   longitude: null,
@@ -109,6 +110,7 @@ export default function PublicarImovel() {
           certificado_energetico: imovel.certificado_energetico || "",
           meses_caucao: imovel.meses_caucao ?? "",
           fianca: Boolean(imovel.fianca),
+          data_disponivel: imovel.data_disponivel ? imovel.data_disponivel.slice(0, 10) : "",
           morada: imovel.morada || "",
           latitude: imovel.latitude ?? null,
           longitude: imovel.longitude ?? null,
@@ -200,6 +202,7 @@ export default function PublicarImovel() {
         certificado_energetico: form.certificado_energetico || null,
         meses_caucao: form.meses_caucao !== "" ? Number(form.meses_caucao) : null,
         fianca: form.fianca,
+        data_disponivel: form.data_disponivel || null,
         fotos: form.fotos,
         foto: form.fotos[0] || null,
       };
@@ -381,8 +384,56 @@ export default function PublicarImovel() {
               <div className="p-4" style={{ background: "#fff", borderRadius: 16, border: "1.5px solid #e0e0e0" }}>
                 <h6 className="fw-bold mb-1" style={{ color: "#1a1a1a" }}>🔐 Condições de Entrada</h6>
                 <p className="text-muted mb-3" style={{ fontSize: "0.82rem" }}>
-                  Defina os requisitos financeiros para o arrendamento.
+                  Defina a disponibilidade e os requisitos financeiros para o arrendamento.
                 </p>
+
+                {/* Disponibilidade */}
+                <div className="mb-4">
+                  <label className="form-label fw-semibold">🗓️ Disponibilidade</label>
+                  <div className="d-flex flex-column gap-2 mt-1">
+                    <div
+                      className="d-flex align-items-center gap-3 p-3 rounded"
+                      style={{
+                        border: `1.5px solid ${!form.data_disponivel ? "#FFC300" : "#e0e0e0"}`,
+                        background: !form.data_disponivel ? "rgba(255,195,0,0.06)" : "#fafafa",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setForm((p) => ({ ...p, data_disponivel: "" }))}
+                    >
+                      <input type="radio" readOnly checked={!form.data_disponivel} style={{ accentColor: "#FFC300", width: 16, height: 16 }} />
+                      <div>
+                        <div className="fw-semibold" style={{ fontSize: "0.9rem" }}>✅ Entrada imediata</div>
+                        <div className="text-muted" style={{ fontSize: "0.78rem" }}>O imóvel está disponível agora</div>
+                      </div>
+                    </div>
+                    <div
+                      className="d-flex align-items-center gap-3 p-3 rounded"
+                      style={{
+                        border: `1.5px solid ${form.data_disponivel ? "#FFC300" : "#e0e0e0"}`,
+                        background: form.data_disponivel ? "rgba(255,195,0,0.06)" : "#fafafa",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => !form.data_disponivel && setForm((p) => ({ ...p, data_disponivel: new Date(Date.now() + 86400000).toISOString().slice(0, 10) }))}
+                    >
+                      <input type="radio" readOnly checked={!!form.data_disponivel} style={{ accentColor: "#FFC300", width: 16, height: 16 }} />
+                      <div className="flex-grow-1">
+                        <div className="fw-semibold" style={{ fontSize: "0.9rem" }}>📅 A partir de uma data</div>
+                        <div className="text-muted" style={{ fontSize: "0.78rem" }}>Indique quando o imóvel ficará disponível</div>
+                      </div>
+                    </div>
+                    {form.data_disponivel && (
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={form.data_disponivel}
+                        min={new Date().toISOString().slice(0, 10)}
+                        onChange={(e) => setForm((p) => ({ ...p, data_disponivel: e.target.value }))}
+                        style={{ borderRadius: 10, border: "1.5px solid #FFC300", maxWidth: 240 }}
+                      />
+                    )}
+                  </div>
+                </div>
+
                 <div className="row g-3">
                   <div className="col-md-6">
                     <label className="form-label fw-semibold">Caução (meses de renda)</label>
@@ -421,7 +472,7 @@ export default function PublicarImovel() {
                 </div>
 
                 {/* Resumo das condições */}
-                {(form.meses_caucao || form.fianca) && (
+                {(form.meses_caucao || form.fianca || form.data_disponivel) && (
                   <div className="mt-3 p-3 rounded" style={{ background: "#fff8e1", border: "1.5px solid #FFC300" }}>
                     <div className="fw-semibold mb-1" style={{ fontSize: "0.85rem", color: "#1a1a1a" }}>
                       💰 Resumo das condições de entrada:
@@ -434,6 +485,14 @@ export default function PublicarImovel() {
                         </li>
                       )}
                       {form.fianca && <li>Fiança: fiador obrigatório</li>}
+                      {form.data_disponivel && (
+                        <li>
+                          Disponível a partir de:{" "}
+                          <strong>
+                            {new Date(form.data_disponivel + "T12:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" })}
+                          </strong>
+                        </li>
+                      )}
                       {form.meses_caucao && (
                         <li>
                           Total entrada estimado:{" "}
@@ -641,50 +700,6 @@ export default function PublicarImovel() {
                 </div>
               </div>
 
-              {/* Extras */}
-              <div
-                className="p-4 mb-4"
-                style={{ background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}
-              >
-                <h5 className="fw-bold mb-4" style={{ color: "#1a1a1a" }}>
-                  ✨ Características Adicionais
-                </h5>
-                <div className="row g-3">
-                  {[
-                    { name: "aceita_pets", label: "🐾 Aceita animais de estimação" },
-                    { name: "mobiliado", label: "🛋️ Mobilado" },
-                    { name: "despesas_incluidas", label: "💡 Despesas incluídas" },
-                    { name: "disponivel", label: "✅ Disponível para arrendamento" },
-                  ].map(({ name, label }) => (
-                    <div key={name} className="col-md-6">
-                      <div
-                        className="d-flex align-items-center gap-3 p-3"
-                        style={{
-                          borderRadius: 10,
-                          border: `1.5px solid ${form[name] ? "#FFC300" : "#e0e0e0"}`,
-                          background: form[name] ? "rgba(255,195,0,0.06)" : "#fafafa",
-                          cursor: "pointer",
-                          transition: "all 0.2s",
-                        }}
-                        onClick={() => setForm((p) => ({ ...p, [name]: !p[name] }))}
-                      >
-                        <input
-                          type="checkbox"
-                          name={name}
-                          checked={form[name]}
-                          onChange={handleChange}
-                          style={{ accentColor: "#FFC300", width: 18, height: 18 }}
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <span className="fw-semibold" style={{ fontSize: "0.9rem", color: "#1a1a1a" }}>
-                          {label}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Características específicas */}
               <div
                 className="p-4 mb-4"
@@ -773,6 +788,10 @@ export default function PublicarImovel() {
                 {/* Checkboxes extras */}
                 <div className="row g-2 mt-2">
                   {[
+                    { name: "aceita_pets", label: "🐾 Aceita animais de estimação" },
+                    { name: "mobiliado", label: "🛋️ Mobilado" },
+                    { name: "despesas_incluidas", label: "💡 Despesas incluídas" },
+                    { name: "disponivel", label: "✅ Disponível para arrendamento" },
                     { name: "varanda", label: "🌿 Varanda" },
                     { name: "garagem", label: "🚗 Garagem" },
                     { name: "armarios_embutidos", label: "🗄️ Armários embutidos" },
