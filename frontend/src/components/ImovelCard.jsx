@@ -52,7 +52,7 @@ export default function ImovelCard({ imovel, favorito = false, onToggleFavorito 
         <p className="card-text text-muted small flex-grow-1">{imovel.descricao}</p>
 
         <div className="d-flex justify-content-between align-items-center mt-3">
-          <span className="fs-5 fw-bold text-success">
+          <span className="fs-5 fw-bold imovel-preco">
             {imovel.preco.toLocaleString("pt-PT")} €
             <small className="text-muted fw-normal fs-6">{t("common.per_month")}</small>
           </span>

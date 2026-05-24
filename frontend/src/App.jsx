@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "./pages/AuthCallback";
 import PerfilSetup from "./pages/PerfilSetup";
+import SetupProcura from "./pages/SetupProcura";
 import Perfil from "./pages/Perfil";
 import PublicarImovel from "./pages/PublicarImovel";
 import MeusImoveis from "./pages/MeusImoveis";
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/perfil/setup" element={<PerfilSetup />} />
+            <Route path="/perfil/procura" element={<SetupProcura />} />
             <Route path="/perfil" element={<Perfil />} />
             <Route path="/curriculo" element={<CurriculoInquilino />} />
             <Route path="/candidaturas" element={<CandidaturasRecebidas />} />

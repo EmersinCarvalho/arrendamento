@@ -148,7 +148,7 @@ body {
 
 /* ── Hero landing ── */
 .hero-landing {
-  background: #1a1a1a;
+  background: linear-gradient(135deg, #fffbeb 0%, #fff 55%, #f8f9fa 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -163,8 +163,9 @@ body {
   right: -200px;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(255,195,0,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,195,0,0.35) 0%, transparent 70%);
   pointer-events: none;
+  animation: glowPulse 7s ease-in-out infinite;
 }
 
 .hero-landing::after {
@@ -180,9 +181,9 @@ body {
 
 .hero-tag {
   display: inline-block;
-  background: rgba(255,195,0,0.15);
-  color: #FFC300;
-  border: 1px solid rgba(255,195,0,0.3);
+  background: rgba(255,195,0,0.18);
+  color: #9a7209;
+  border: 1px solid rgba(255,195,0,0.45);
   padding: 6px 16px;
   border-radius: 50px;
   font-size: 0.85rem;
@@ -196,7 +197,7 @@ body {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 800;
   line-height: 1.1;
-  color: #fff;
+  color: #1a1a1a;
   letter-spacing: -1px;
 }
 
@@ -205,49 +206,60 @@ body {
 }
 
 .hero-subtitle {
-  color: rgba(255,255,255,0.6);
+  color: rgba(26,26,26,0.65);
   font-size: 1.15rem;
   line-height: 1.7;
   max-width: 520px;
 }
 
 .hero-search-wrap {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-top: 4px solid #FFC300;
+  border-radius: 22px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 0 20px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(255,195,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.hero-search-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle at top right, rgba(255,195,0,0.12), transparent 70%);
+  pointer-events: none;
 }
 
 .hero-search-wrap .form-control {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  color: #1a1a1a;
   border-radius: 10px;
   padding: 0.8rem 1.2rem;
 }
 
 .hero-search-wrap .form-control::placeholder {
-  color: rgba(255,255,255,0.45);
+  color: rgba(26,26,26,0.4);
 }
 
 .hero-search-wrap .form-control:focus {
-  background: rgba(255,255,255,0.15);
+  background: #fff;
   border-color: #FFC300;
   box-shadow: 0 0 0 3px rgba(255,195,0,0.2);
-  color: #fff;
+  color: #1a1a1a;
 }
 
 .hero-search-wrap .form-select {
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  color: #1a1a1a;
   border-radius: 10px;
 }
 
 .hero-search-wrap .form-select option {
-  background: #1a1a1a;
-  color: #fff;
+  background: #fff;
+  color: #1a1a1a;
 }
 
 .btn-brand {
@@ -295,7 +307,7 @@ body {
 
 .hero-stats .stat-label {
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(26,26,26,0.55);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 4px;
@@ -310,6 +322,13 @@ body {
 .step-card {
   text-align: center;
   padding: 2rem 1.5rem;
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.1);
 }
 
 .step-number {
@@ -376,6 +395,14 @@ body {
   color: #1a1a1a;
 }
 
+[data-tema="escuro"] .section-title {
+  color: #fff;
+}
+
+[data-tema="escuro"] .section-subtitle {
+  color: rgba(255,255,255,0.6);
+}
+
 .section-subtitle {
   color: #666;
   font-size: 1.05rem;
@@ -394,34 +421,61 @@ body {
 
 /* ── Cards imoveis ── */
 .imovel-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: 16px !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border-radius: 18px !important;
   overflow: hidden;
-  border: 1px solid #eee !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.10);
 }
 
 .imovel-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1) !important;
+  transform: translateY(-8px);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.20) !important;
+  border-color: rgba(255,195,0,0.5) !important;
+}
+
+.imovel-card .card-img-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.45));
+  pointer-events: none;
 }
 
 .imovel-card .card-img-wrapper img {
-  transition: transform 0.35s ease;
+  transition: transform 0.4s ease;
 }
 
 .imovel-card:hover .card-img-wrapper img {
-  transform: scale(1.06);
+  transform: scale(1.08);
+}
+
+.imovel-card .card-body {
+  border-top: 3px solid #FFC300;
 }
 
 .imovel-card .badge-tipologia {
   background: #FFC300;
   color: #1a1a1a;
   font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .imovel-card .badge-cidade {
   background: #1a1a1a;
   color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.imovel-preco {
+  color: #c4900a;
+}
+
+[data-tema="escuro"] .imovel-preco {
+  color: #FFC300;
 }
 
 .object-fit-cover {
@@ -750,4 +804,138 @@ footer .text-muted {
   .swipe-card-photo {
     height: 55%;
   }
+}
+
+/* ════════════════════════════════════════
+   Animações – Home
+   ════════════════════════════════════════ */
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; transform: scale(1.12); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero – animação imediata ao carregar */
+.hero-anim-text {
+  animation: fadeInLeft 0.85s ease both;
+}
+.hero-anim-search {
+  animation: fadeInRight 0.85s 0.25s ease both;
+}
+
+/* Scroll-triggered – ativado via IntersectionObserver */
+.scroll-anim {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.scroll-anim.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-anim.delay-1 { transition-delay: 0.12s; }
+.scroll-anim.delay-2 { transition-delay: 0.24s; }
+.scroll-anim.delay-3 { transition-delay: 0.36s; }
+
+/* Navbar brand – sempre escuro sobre fundo amarelo */
+.navbar-brand-logo .brand-house {
+  color: #1a1a1a;
+}
+.navbar-brand-logo .brand-arren {
+  color: #1a1a1a;
+}
+
+/* Hero – classes utiliátrias (light por defeito) */
+.hero-stats-sep {
+  border-top: 1px solid rgba(26,26,26,0.1);
+}
+.hero-search-label {
+  color: rgba(26,26,26,0.6);
+}
+.hero-cidade-badge {
+  background: rgba(26,26,26,0.06) !important;
+  color: #7a5c00 !important;
+  border: 1px solid rgba(26,26,26,0.12) !important;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+/* Hero – overrides para modo escuro */
+[data-tema="escuro"] .hero-landing {
+  background: #1a1a1a;
+}
+[data-tema="escuro"] .hero-landing::before {
+  background: radial-gradient(circle, rgba(255,195,0,0.15) 0%, transparent 70%);
+}
+[data-tema="escuro"] .hero-tag {
+  color: #FFC300;
+  background: rgba(255,195,0,0.15);
+  border-color: rgba(255,195,0,0.3);
+}
+[data-tema="escuro"] .hero-title {
+  color: #fff;
+}
+[data-tema="escuro"] .hero-subtitle {
+  color: rgba(255,255,255,0.6);
+}
+[data-tema="escuro"] .hero-search-wrap::before {
+  background: radial-gradient(circle at top right, rgba(255,195,0,0.08), transparent 70%);
+}
+[data-tema="escuro"] .hero-search-wrap {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+}
+[data-tema="escuro"] .hero-search-wrap .form-control {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.15);
+  color: #fff;
+}
+[data-tema="escuro"] .hero-search-wrap .form-control::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+[data-tema="escuro"] .hero-search-wrap .form-control:focus {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+[data-tema="escuro"] .hero-search-wrap .form-select {
+  background-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.15);
+  color: #fff;
+}
+[data-tema="escuro"] .hero-search-wrap .form-select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+[data-tema="escuro"] .hero-stats .stat-label {
+  color: rgba(255,255,255,0.5);
+}
+[data-tema="escuro"] .hero-stats-sep {
+  border-top-color: rgba(255,255,255,0.1) !important;
+}
+[data-tema="escuro"] .hero-search-label {
+  color: rgba(255,255,255,0.6);
+}
+[data-tema="escuro"] .hero-cidade-badge {
+  background: rgba(255,195,0,0.15) !important;
+  color: #FFC300 !important;
+  border-color: rgba(255,195,0,0.25) !important;
 }

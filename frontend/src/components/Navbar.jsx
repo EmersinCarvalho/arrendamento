@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n/index.js";
@@ -29,6 +29,17 @@ export default function Navbar() {
   const { t } = useTranslation();
   const [idioma, setIdioma] = useState(() => localStorage.getItem("ah_idioma") || "pt");
   const idiomaAtual = IDIOMAS.find((i) => i.code === idioma) || IDIOMAS[0];
+  const [propostasNaoLidas, setPropostasNaoLidas] = useState(0);
+
+  useEffect(() => {
+    if (!utilizador || utilizador.perfil !== "senhorio") return;
+    const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api`;
+    const token = localStorage.getItem("ah_token");
+    fetch(`${API_URL}/candidaturas/nao-lidas`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((d) => setPropostasNaoLidas(d.total || 0))
+      .catch(() => {});
+  }, [utilizador?.id]);
 
   function handleChangeLanguage(code) {
     setIdioma(code);
@@ -110,10 +121,13 @@ export default function Navbar() {
               <div className="dropdown">
                 <button
                   className="btn d-flex align-items-center gap-2 fw-semibold text-white"
-                  style={{ background: "rgba(255,255,255,0.1)", borderRadius: "50px", padding: "6px 14px", border: "none" }}
+                  style={{ background: "rgba(255,255,255,0.1)", borderRadius: "50px", padding: "6px 14px", border: "none", position: "relative" }}
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
+                  {propostasNaoLidas > 0 && (
+                    <span style={{ position: "absolute", top: 4, right: 4, width: 10, height: 10, background: "#e63946", borderRadius: "50%", border: "2px solid #1a1a1a" }} />
+                  )}
                   {utilizador.foto_url ? (
                     <img
                       src={utilizador.foto_url}
@@ -170,13 +184,14 @@ export default function Navbar() {
                     { to: "/favoritos", icon: "❤️", label: t("nav.favorites"), sub: t("nav.saved_properties"), color: "#ff4d6d" },
                     ...(utilizador.perfil === "inquilino" ? [
                       { to: "/curriculo", icon: "📄", label: t("nav.real_estate_cv"), sub: t("nav.my_cv"), color: "#2e7d32" },
+                      { to: "/perfil/procura", icon: "🔍", label: "Preferências", sub: "Configurar pesquisa ideal", color: "#7b61ff" },
                     ] : []),
                     ...(utilizador.perfil === "senhorio" ? [
                       { to: "/meus-imoveis", icon: "🏠", label: t("nav.my_properties"), sub: t("nav.manage_listings"), color: "#2196f3" },
                       { to: "/imoveis/publicar", icon: "➕", label: t("nav.publish_property"), sub: t("nav.new_listing"), color: "#43a047" },
-                      { to: "/candidaturas", icon: "📋", label: t("nav.received_applications"), sub: t("nav.tenant_cvs"), color: "#e65100" },
+                      { to: "/candidaturas", icon: "📋", label: t("nav.received_applications"), sub: t("nav.tenant_cvs"), color: "#e65100", badge: propostasNaoLidas > 0 ? propostasNaoLidas : null },
                     ] : []),
-                  ].map(({ to, icon, label, sub, color }) => (
+                  ].map(({ to, icon, label, sub, color, badge }) => (
                     <li key={to}>
                       <Link
                         className="dropdown-item rounded-3 d-flex align-items-center gap-3 py-2 px-2"
@@ -189,7 +204,14 @@ export default function Navbar() {
                           {icon}
                         </span>
                         <div>
-                          <div className="fw-semibold" style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>{label}</div>
+                          <div className="fw-semibold" style={{ fontSize: "0.88rem", lineHeight: 1.2 }}>
+                            {label}
+                            {badge && (
+                              <span className="badge ms-2" style={{ background: "#e63946", color: "#fff", fontSize: "0.65rem", borderRadius: 20, padding: "2px 7px" }}>
+                                🔔 {badge}
+                              </span>
+                            )}
+                          </div>
                           <div className="text-muted" style={{ fontSize: "0.73rem" }}>{sub}</div>
                         </div>
                       </Link>

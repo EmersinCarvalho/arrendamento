@@ -87,7 +87,7 @@ export default function CandidaturasRecebidas() {
           <div className="d-flex align-items-center gap-3 flex-wrap">
             <div>
               <h1 className="text-white fw-bold mb-1" style={{ fontSize: "2rem" }}>
-                Candidaturas recebidas
+                Propostas recebidas
               </h1>
               <p className="mb-0" style={{ color: "#aaa", fontSize: "0.95rem" }}>
                 Inquilinos que manifestaram interesse nos seus imóveis

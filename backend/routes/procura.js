@@ -10,7 +10,13 @@ router.get("/perfil", verificarToken, async (req, res) => {
       "SELECT * FROM perfil_procura WHERE utilizador_id = ?",
       [req.utilizador.id]
     );
-    res.json(rows[0] || null);
+    const perfil = rows[0];
+    if (perfil) {
+      try { perfil.prioridades = JSON.parse(perfil.prioridades || "[]"); } catch { perfil.prioridades = []; }
+      try { perfil.tipo_imovel = JSON.parse(perfil.tipo_imovel || "[]"); } catch { perfil.tipo_imovel = []; }
+      if (!Array.isArray(perfil.tipo_imovel)) perfil.tipo_imovel = perfil.tipo_imovel ? [perfil.tipo_imovel] : [];
+    }
+    res.json(perfil || null);
   } catch (err) {
     res.status(500).json({ erro: "Erro ao carregar perfil de procura" });
   }
@@ -45,7 +51,7 @@ router.post("/perfil", verificarToken, async (req, res) => {
       [
         req.utilizador.id,
         objetivo || "arrendar",
-        tipo_imovel || null,
+        JSON.stringify(Array.isArray(tipo_imovel) ? tipo_imovel : (tipo_imovel ? [tipo_imovel] : [])),
         cidade || null,
         tipologia || null,
         preco_max || 2000,
@@ -61,7 +67,13 @@ router.post("/perfil", verificarToken, async (req, res) => {
       "SELECT * FROM perfil_procura WHERE utilizador_id = ?",
       [req.utilizador.id]
     );
-    res.json(rows[0]);
+    const perfilAtualizado = rows[0];
+    if (perfilAtualizado) {
+      try { perfilAtualizado.prioridades = JSON.parse(perfilAtualizado.prioridades || "[]"); } catch { perfilAtualizado.prioridades = []; }
+      try { perfilAtualizado.tipo_imovel = JSON.parse(perfilAtualizado.tipo_imovel || "[]"); } catch { perfilAtualizado.tipo_imovel = []; }
+      if (!Array.isArray(perfilAtualizado.tipo_imovel)) perfilAtualizado.tipo_imovel = perfilAtualizado.tipo_imovel ? [perfilAtualizado.tipo_imovel] : [];
+    }
+    res.json(perfilAtualizado);
   } catch (err) {
     console.error("Erro em POST /api/procura/perfil:", err.message);
     res.status(500).json({ erro: "Erro ao guardar perfil" });

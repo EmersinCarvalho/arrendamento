@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImovelCard from "../components/ImovelCard";
@@ -6,6 +6,7 @@ import Loading from "../components/Loading";
 import { getImoveis } from "../services/api";
 import { getUtilizador } from "../services/auth";
 import HomeLogado from "./HomeLogado";
+import logo from "../assets/logo.png";
 
 const CIDADES = ["Lisboa", "Porto", "Braga", "Coimbra", "Faro", "Cascais"];
 
@@ -31,6 +32,23 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Activa animação scroll-triggered
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll(".scroll-anim").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [loading]);
+
   const imoveisDestaque = imoveis.slice(0, 3);
 
   // Utilizador autenticado → página personalizada
@@ -45,7 +63,7 @@ export default function Home() {
         <div className="container position-relative" style={{ zIndex: 1 }}>
           <div className="row align-items-center g-5">
             {/* Texto */}
-            <div className="col-12 col-lg-6">
+            <div className="col-12 col-lg-6 hero-anim-text">
               <div className="hero-tag">🏠 {t("home.tag")}</div>
               <h1 className="hero-title mb-4">
                 {t("home.hero_title_1")}<br />
@@ -64,7 +82,7 @@ export default function Home() {
                 </Link>
               </div>
               {/* Stats */}
-              <div className="hero-stats d-flex gap-4 mt-5 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+              <div className="hero-stats d-flex gap-4 mt-5 pt-3 hero-stats-sep">
                 <div className="stat-item">
                   <div className="stat-number">500+</div>
                   <div className="stat-label">{t("home.stat_properties")}</div>
@@ -85,11 +103,20 @@ export default function Home() {
             </div>
 
             {/* Caixa de pesquisa */}
-            <div className="col-12 col-lg-5 offset-lg-1">
+            <div className="col-12 col-lg-5 offset-lg-1 hero-anim-search">
               <div className="hero-search-wrap">
-                <p className="text-white fw-semibold mb-3 small text-uppercase" style={{ letterSpacing: "1px", color: "rgba(255,255,255,0.6) !important" }}>
-                  {t("home.quick_search")}
-                </p>
+                <div className="text-center mb-4">
+                  <img
+                    src={logo}
+                    alt="ArrendaHouse"
+                    style={{ height: 68, objectFit: "contain", marginBottom: "0.75rem" }}
+                  />
+                  <div className="fw-bold" style={{ fontSize: "1.2rem", letterSpacing: "-0.3px" }}>ArrendaHouse</div>
+                  <p className="hero-search-label fw-semibold mb-0 small text-uppercase mt-1" style={{ letterSpacing: "1.2px" }}>
+                    {t("home.quick_search")}
+                  </p>
+                  <div style={{ height: 2, background: "linear-gradient(90deg, transparent, #FFC300, transparent)", marginTop: "1rem", borderRadius: 2 }} />
+                </div>
                 <div className="d-flex flex-column gap-3">
                   <input
                     type="text"
@@ -120,8 +147,7 @@ export default function Home() {
                     <Link
                       key={c}
                       to={`/imoveis?cidade=${c}`}
-                      className="badge text-decoration-none"
-                      style={{ background: "rgba(255,195,0,0.15)", color: "#FFC300", border: "1px solid rgba(255,195,0,0.25)", padding: "6px 12px", borderRadius: "20px", fontSize: "0.8rem" }}
+                      className="badge text-decoration-none hero-cidade-badge"
                     >
                       {c}
                     </Link>
@@ -144,9 +170,9 @@ export default function Home() {
             </p>
           </div>
           <div className="row g-4 justify-content-center">
-            {COMO_FUNCIONA.map((passo) => (
+            {COMO_FUNCIONA.map((passo, i) => (
               <div key={passo.numero} className="col-12 col-md-4">
-                <div className="step-card">
+                <div className={`step-card scroll-anim${i > 0 ? ` delay-${i}` : ""}`}>
                   <div className="step-icon">{passo.icon}</div>
                   <div className="step-number">{passo.numero}</div>
                   <h4 className="fw-bold mb-2">{passo.titulo}</h4>
@@ -163,14 +189,14 @@ export default function Home() {
         <div className="container">
           <div className="text-center mb-5">
             <div className="section-label">Para todos</div>
-            <h2 className="section-title mb-3">Para quem é o ArrendaHouse? Emerson de  carvalho oliveira com novas alterações</h2>
+            <h2 className="section-title mb-3">Para quem é o ArrendaHouse?</h2>
             <p className="section-subtitle">
               Uma plataforma pensada tanto para quem quer arrendar como para quem quer publicar.
             </p>
           </div>
           <div className="row g-4">
             <div className="col-12 col-md-6">
-              <div className="perfil-card inquilino shadow-sm">
+              <div className="perfil-card inquilino shadow-sm scroll-anim">
                 <div className="perfil-icon">🏠</div>
                 <h3 className="fw-bold mb-3">Sou Inquilino</h3>
                 <p className="mb-4" style={{ color: "rgba(255,255,255,0.75)" }}>
@@ -190,7 +216,7 @@ export default function Home() {
               </div>
             </div>
             <div className="col-12 col-md-6">
-              <div className="perfil-card senhorio shadow-sm">
+              <div className="perfil-card senhorio shadow-sm scroll-anim delay-2">
                 <div className="perfil-icon">🔑</div>
                 <h3 className="fw-bold mb-3">Sou Senhorio</h3>
                 <p className="mb-4" style={{ color: "rgba(26,26,26,0.7)" }}>
@@ -233,8 +259,8 @@ export default function Home() {
 
           {!loading && !erro && (
             <div className="row g-4">
-              {imoveisDestaque.map((imovel) => (
-                <div key={imovel.id} className="col-12 col-md-6 col-lg-4">
+              {imoveisDestaque.map((imovel, i) => (
+                <div key={imovel.id} className={`col-12 col-md-6 col-lg-4 scroll-anim${i > 0 ? ` delay-${i}` : ""}`}>
                   <ImovelCard imovel={imovel} />
                 </div>
               ))}
@@ -245,7 +271,7 @@ export default function Home() {
 
       {/* ── CTA FINAL ── */}
       <section style={{ background: "#FFC300", padding: "5rem 0" }}>
-        <div className="container text-center">
+        <div className="container text-center scroll-anim">
           <h2 className="fw-bold mb-3" style={{ color: "#1a1a1a", fontSize: "2.2rem" }}>
             Pronto para começar?
           </h2>

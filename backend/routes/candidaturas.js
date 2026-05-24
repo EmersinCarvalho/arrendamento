@@ -180,6 +180,25 @@ router.get("/recebidas", verificarToken, async (req, res) => {
   }
 });
 
+// GET /api/candidaturas/nao-lidas — contagem de propostas não lidas para o senhorio
+router.get("/nao-lidas", verificarToken, async (req, res) => {
+  if (req.utilizador.perfil !== "senhorio") {
+    return res.json({ total: 0 });
+  }
+  try {
+    const [rows] = await db.execute(
+      `SELECT COUNT(*) AS total
+       FROM candidaturas c
+       JOIN imoveis i ON i.id = c.imovel_id
+       WHERE i.utilizador_id = ? AND c.lida = 0`,
+      [req.utilizador.id]
+    );
+    res.json({ total: rows[0].total });
+  } catch (err) {
+    res.status(500).json({ total: 0 });
+  }
+});
+
 // PATCH /api/candidaturas/:id/lida — marcar candidatura como lida
 router.patch("/:id/lida", verificarToken, async (req, res) => {
   if (req.utilizador.perfil !== "senhorio") {
