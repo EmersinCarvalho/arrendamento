@@ -163,7 +163,7 @@ export default function Home() {
         <div className="container">
           <div className="text-center mb-5">
             <div className="section-label">Para todos</div>
-            <h2 className="section-title mb-3">Para quem é o ArrendaHouse?</h2>
+            <h2 className="section-title mb-3">Para quem é o ArrendaHouse? Emerson de  carvalho oliveira</h2>
             <p className="section-subtitle">
               Uma plataforma pensada tanto para quem quer arrendar como para quem quer publicar.
             </p>
