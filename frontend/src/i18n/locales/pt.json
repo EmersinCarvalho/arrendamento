@@ -147,7 +147,15 @@
     "all_typologies": "Todas as tipologias",
     "clear_filters": "Limpar filtros",
     "no_results": "Nenhum imóvel encontrado com os filtros aplicados.",
-    "load_error": "Não foi possível carregar os imóveis."
+    "load_error": "Não foi possível carregar os imóveis.",
+    "max_price": "Preço máximo",
+    "price_placeholder": "Ex: 1200",
+    "profile_active": "Perfil ativo",
+    "use_my_profile": "Usar o meu perfil",
+    "filtering_by": "A filtrar por:",
+    "prev_page": "‹ Anterior",
+    "next_page": "Próxima ›",
+    "up_to_price": "até {{value}}€/mês"
   },
   "property_card": {
     "view": "Ver imóvel",

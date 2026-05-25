@@ -147,7 +147,15 @@
     "all_typologies": "Tous les types",
     "clear_filters": "Effacer les filtres",
     "no_results": "Aucun bien trouvé avec les filtres appliqués.",
-    "load_error": "Impossible de charger les biens."
+    "load_error": "Impossible de charger les biens.",
+    "max_price": "Prix maximum",
+    "price_placeholder": "Ex : 1200",
+    "profile_active": "Profil actif",
+    "use_my_profile": "Utiliser mon profil",
+    "filtering_by": "Filtrage par :",
+    "prev_page": "‹ Précédent",
+    "next_page": "Suivant ›",
+    "up_to_price": "jusqu'à {{value}}€/mois"
   },
   "property_card": {
     "view": "Voir le bien",

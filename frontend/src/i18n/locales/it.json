@@ -147,7 +147,15 @@
     "all_typologies": "Tutti i tipi",
     "clear_filters": "Cancella filtri",
     "no_results": "Nessun immobile trovato con i filtri applicati.",
-    "load_error": "Impossibile caricare gli immobili."
+    "load_error": "Impossibile caricare gli immobili.",
+    "max_price": "Prezzo massimo",
+    "price_placeholder": "Es: 1200",
+    "profile_active": "Profilo attivo",
+    "use_my_profile": "Usa il mio profilo",
+    "filtering_by": "Filtro per:",
+    "prev_page": "‹ Precedente",
+    "next_page": "Successivo ›",
+    "up_to_price": "fino a {{value}}€/mese"
   },
   "property_card": {
     "view": "Vedi immobile",

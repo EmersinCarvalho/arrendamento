@@ -45,7 +45,7 @@ export default function Imoveis() {
     setErro(null);
     getImoveis({ cidade: cidadeEfetiva, tipologia: tipologiaEfetiva })
       .then(setImoveis)
-      .catch(() => setErro("Não foi possível carregar os imóveis."))
+      .catch(() => setErro(t("properties.load_error")))
       .finally(() => setLoading(false));
   }, [cidadeEfetiva, tipologiaEfetiva]);
 
@@ -162,13 +162,13 @@ export default function Imoveis() {
 
         <div className="col-12 col-sm-6 col-md">
           <label className="form-label fw-semibold small text-uppercase text-muted">
-            Preço máximo
+            {t("properties.max_price")}
           </label>
           <div className="input-group">
             <input
               type="number"
               className="form-control"
-              placeholder="Ex: 1200"
+              placeholder={t("properties.price_placeholder")}
               min={0}
               value={usarPerfil ? precoMaxEfetivo : precoInput}
               disabled={usarPerfil}
@@ -176,7 +176,7 @@ export default function Imoveis() {
               onBlur={(e) => setFiltro("precoMax", e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && setFiltro("precoMax", precoInput)}
             />
-            <span className="input-group-text text-muted">€/mês</span>
+            <span className="input-group-text text-muted">€{t("common.per_month")}</span>
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default function Imoveis() {
                 onClick={() => { setUsarPerfil((v) => !v); setPagina(1); }}
               >
                 <span>👤</span>
-                {usarPerfil ? "Perfil ativo" : "Usar o meu perfil"}
+                {usarPerfil ? t("properties.profile_active") : t("properties.use_my_profile")}
                 {usarPerfil && (
                   <span className="badge ms-1" style={{ background: "#1a1a1a", color: "#FFC300", fontSize: "0.7rem" }}>ON</span>
                 )}
@@ -211,7 +211,7 @@ export default function Imoveis() {
       {/* Chips filtros de perfil ativos */}
       {usarPerfil && perfilProcura && (
         <div className="mb-3 d-flex flex-wrap gap-2 align-items-center">
-          <small className="text-muted">A filtrar por:</small>
+          <small className="text-muted">{t("properties.filtering_by")}</small>
           {perfilProcura.cidade && (
             <span className="badge rounded-pill" style={{ background: "rgba(255,195,0,0.15)", color: "#7a5c00", border: "1px solid rgba(255,195,0,0.4)" }}>
               📍 {perfilProcura.cidade}
@@ -224,7 +224,7 @@ export default function Imoveis() {
           )}
           {perfilProcura.preco_max && (
             <span className="badge rounded-pill" style={{ background: "rgba(255,195,0,0.15)", color: "#7a5c00", border: "1px solid rgba(255,195,0,0.4)" }}>
-              💰 até {perfilProcura.preco_max}€/mês
+              💰 {t("properties.up_to_price", { value: perfilProcura.preco_max })}
             </span>
           )}
         </div>
@@ -268,7 +268,7 @@ export default function Imoveis() {
                 disabled={pagina === 1}
                 onClick={() => { setPagina(p => p - 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
               >
-                ‹ Anterior
+                {t("properties.prev_page")}
               </button>
 
               {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((n) => (
@@ -291,7 +291,7 @@ export default function Imoveis() {
                 disabled={pagina === totalPaginas}
                 onClick={() => { setPagina(p => p + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}
               >
-                Próxima ›
+                {t("properties.next_page")}
               </button>
             </div>
           )}

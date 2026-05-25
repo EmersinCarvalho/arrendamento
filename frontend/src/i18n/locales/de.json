@@ -147,7 +147,15 @@
     "all_typologies": "Alle Typen",
     "clear_filters": "Filter zurücksetzen",
     "no_results": "Keine Immobilien mit den angewendeten Filtern gefunden.",
-    "load_error": "Immobilien konnten nicht geladen werden."
+    "load_error": "Immobilien konnten nicht geladen werden.",
+    "max_price": "Höchstpreis",
+    "price_placeholder": "z. B. 1200",
+    "profile_active": "Profil aktiv",
+    "use_my_profile": "Mein Profil verwenden",
+    "filtering_by": "Filtern nach:",
+    "prev_page": "‹ Zurück",
+    "next_page": "Weiter ›",
+    "up_to_price": "bis zu {{value}}€/Monat"
   },
   "property_card": {
     "view": "Immobilie ansehen",

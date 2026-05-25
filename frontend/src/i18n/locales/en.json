@@ -147,7 +147,15 @@
     "all_typologies": "All types",
     "clear_filters": "Clear filters",
     "no_results": "No properties found with the applied filters.",
-    "load_error": "Could not load properties."
+    "load_error": "Could not load properties.",
+    "max_price": "Max price",
+    "price_placeholder": "E.g. 1200",
+    "profile_active": "Profile active",
+    "use_my_profile": "Use my profile",
+    "filtering_by": "Filtering by:",
+    "prev_page": "‹ Previous",
+    "next_page": "Next ›",
+    "up_to_price": "up to {{value}}€/month"
   },
   "property_card": {
     "view": "View property",
