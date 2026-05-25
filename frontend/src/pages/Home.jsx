@@ -188,50 +188,50 @@ export default function Home() {
       <section className="section-para-quem">
         <div className="container">
           <div className="text-center mb-5">
-            <div className="section-label">Para todos</div>
-            <h2 className="section-title mb-3">Para quem é o ArrendaHouse?</h2>
+            <div className="section-label">{t("home.for_all_label")}</div>
+            <h2 className="section-title mb-3">{t("home.for_who_title")}</h2>
             <p className="section-subtitle">
-              Uma plataforma pensada tanto para quem quer arrendar como para quem quer publicar.
+              {t("home.for_who_subtitle")}
             </p>
           </div>
           <div className="row g-4">
             <div className="col-12 col-md-6">
               <div className="perfil-card inquilino shadow-sm scroll-anim">
                 <div className="perfil-icon">🏠</div>
-                <h3 className="fw-bold mb-3">Sou Inquilino</h3>
+                <h3 className="fw-bold mb-3">{t("home.tenant_title")}</h3>
                 <p className="mb-4" style={{ color: "rgba(255,255,255,0.75)" }}>
-                  Procuro um imóvel para arrendar. Quero encontrar rapidamente, comparar preços e contactar senhorios.
+                  {t("home.tenant_desc")}
                 </p>
                 <ul className="list-unstyled mb-4">
-                  {["Pesquisa avançada por cidade e tipologia", "Ver fotos e detalhes completos", "Contactar senhorio diretamente", "Guardar favoritos", "Alertas de novos imóveis"].map((item) => (
-                    <li key={item} className="d-flex align-items-center gap-2 mb-2">
+                  {["home.tenant_feature1", "home.tenant_feature2", "home.tenant_feature3", "home.tenant_feature4", "home.tenant_feature5"].map((feat) => (
+                    <li key={feat} className="d-flex align-items-center gap-2 mb-2">
                       <span style={{ color: "#FFC300" }}>✓</span>
-                      <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.95rem" }}>{item}</span>
+                      <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.95rem" }}>{t(feat)}</span>
                     </li>
                   ))}
                 </ul>
                 <Link to="/login" className="btn btn-brand w-100 fw-bold">
-                  Entrar como Inquilino
+                  {t("home.tenant_btn")}
                 </Link>
               </div>
             </div>
             <div className="col-12 col-md-6">
               <div className="perfil-card senhorio shadow-sm scroll-anim delay-2">
                 <div className="perfil-icon">🔑</div>
-                <h3 className="fw-bold mb-3">Sou Senhorio</h3>
+                <h3 className="fw-bold mb-3">{t("home.landlord_title")}</h3>
                 <p className="mb-4" style={{ color: "rgba(26,26,26,0.7)" }}>
-                  Tenho um imóvel para arrendar. Quero publicar o anúncio, gerir visitas e encontrar o inquilino certo.
+                  {t("home.landlord_desc")}
                 </p>
                 <ul className="list-unstyled mb-4">
-                  {["Publicar anúncio gratuitamente", "Gerir imóveis num só lugar", "Receber contactos de inquilinos", "Estatísticas do anúncio", "Suporte dedicado"].map((item) => (
-                    <li key={item} className="d-flex align-items-center gap-2 mb-2">
+                  {["home.landlord_feature1", "home.landlord_feature2", "home.landlord_feature3", "home.landlord_feature4", "home.landlord_feature5"].map((feat) => (
+                    <li key={feat} className="d-flex align-items-center gap-2 mb-2">
                       <span style={{ color: "#1a1a1a", fontWeight: "bold" }}>✓</span>
-                      <span style={{ color: "rgba(26,26,26,0.8)", fontSize: "0.95rem" }}>{item}</span>
+                      <span style={{ color: "rgba(26,26,26,0.8)", fontSize: "0.95rem" }}>{t(feat)}</span>
                     </li>
                   ))}
                 </ul>
                 <Link to="/login" className="btn fw-bold w-100" style={{ background: "#1a1a1a", color: "#FFC300" }}>
-                  Entrar como Senhorio
+                  {t("home.landlord_btn")}
                 </Link>
               </div>
             </div>
@@ -244,11 +244,11 @@ export default function Home() {
         <div className="container">
           <div className="d-flex justify-content-between align-items-center mb-5">
             <div>
-              <div className="section-label">Disponíveis agora</div>
-              <h2 className="section-title mb-0">Imóveis em destaque</h2>
+              <div className="section-label">{t("home.available_now")}</div>
+              <h2 className="section-title mb-0">{t("home.featured_title")}</h2>
             </div>
             <Link to="/imoveis" className="btn btn-brand fw-bold px-4">
-              Ver todos
+              {t("home.see_all")}
             </Link>
           </div>
 
@@ -273,10 +273,10 @@ export default function Home() {
       <section style={{ background: "#FFC300", padding: "5rem 0" }}>
         <div className="container text-center scroll-anim">
           <h2 className="fw-bold mb-3" style={{ color: "#1a1a1a", fontSize: "2.2rem" }}>
-            Pronto para começar?
+            {t("home.cta_title")}
           </h2>
           <p className="mb-5" style={{ color: "rgba(26,26,26,0.7)", fontSize: "1.1rem" }}>
-            Junte-se a milhares de portugueses que já usam o ArrendaHouse.
+            {t("home.cta_subtitle")}
           </p>
           <div className="d-flex flex-wrap justify-content-center gap-3">
             <Link
@@ -284,14 +284,14 @@ export default function Home() {
               className="btn btn-lg fw-bold px-5"
               style={{ background: "#1a1a1a", color: "#FFC300", borderRadius: "10px" }}
             >
-              Explorar imóveis
+              {t("home.explore_btn")}
             </Link>
             <Link
               to="/login"
               className="btn btn-lg fw-bold px-5"
               style={{ background: "rgba(0,0,0,0.12)", color: "#1a1a1a", border: "2px solid rgba(0,0,0,0.2)", borderRadius: "10px" }}
             >
-              Publicar imóvel
+              {t("home.publish_btn")}
             </Link>
           </div>
         </div>
