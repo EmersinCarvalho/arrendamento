@@ -254,62 +254,62 @@ export default function Navbar() {
                 >
                   {t("nav.register")}
                 </Link>
-
-                {/* Seletor de idioma */}
-                <div className="dropdown">
-                  <button
-                    className="btn btn-sm d-flex align-items-center gap-1"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    title={t("nav.select_language")}
-                    style={{
-                      background: "rgba(255,255,255,0.1)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: "20px",
-                      padding: "4px 10px",
-                      color: "#fff",
-                    }}
-                  >
-                    <img
-                      src={idiomaAtual.flag}
-                      alt={idiomaAtual.label}
-                      style={{ width: 21, height: 15, objectFit: "cover", borderRadius: 2 }}
-                    />
-                    <span className="d-none d-sm-inline" style={{ fontSize: "0.8rem" }}>
-                      {idiomaAtual.code.toUpperCase()}
-                    </span>
-                    <span style={{ fontSize: "0.55rem", opacity: 0.7 }}>▾</span>
-                  </button>
-                  <ul
-                    className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2"
-                    style={{ minWidth: 165, borderRadius: 12 }}
-                  >
-                    {IDIOMAS.map(({ code, label, flag }) => (
-                      <li key={code}>
-                        <button
-                          className="dropdown-item rounded-3 d-flex align-items-center gap-2 py-2"
-                          onClick={() => handleChangeLanguage(code)}
-                          style={{
-                            background: idioma === code ? "rgba(255,195,0,0.12)" : "",
-                            fontWeight: idioma === code ? "600" : "400",
-                          }}
-                        >
-                          <img
-                            src={flag}
-                            alt={label}
-                            style={{ width: 22, height: 15, objectFit: "cover", borderRadius: 2 }}
-                          />
-                          <span style={{ fontSize: "0.88rem" }}>{label}</span>
-                          {idioma === code && (
-                            <span className="ms-auto" style={{ color: "#FFC300", fontSize: "0.8rem" }}>✓</span>
-                          )}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
               </>
             )}
+
+            {/* Seletor de idioma — visível para todos */}
+            <div className="dropdown">
+              <button
+                className="btn btn-sm d-flex align-items-center gap-1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                title={t("nav.select_language")}
+                style={{
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: "20px",
+                  padding: "4px 10px",
+                  color: "#fff",
+                }}
+              >
+                <img
+                  src={idiomaAtual.flag}
+                  alt={idiomaAtual.label}
+                  style={{ width: 21, height: 15, objectFit: "cover", borderRadius: 2 }}
+                />
+                <span className="d-none d-sm-inline" style={{ fontSize: "0.8rem" }}>
+                  {idiomaAtual.code.toUpperCase()}
+                </span>
+                <span style={{ fontSize: "0.55rem", opacity: 0.7 }}>▾</span>
+              </button>
+              <ul
+                className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2"
+                style={{ minWidth: 165, borderRadius: 12 }}
+              >
+                {IDIOMAS.map(({ code, label, flag }) => (
+                  <li key={code}>
+                    <button
+                      className="dropdown-item rounded-3 d-flex align-items-center gap-2 py-2"
+                      onClick={() => handleChangeLanguage(code)}
+                      style={{
+                        background: idioma === code ? "rgba(255,195,0,0.12)" : "",
+                        fontWeight: idioma === code ? "600" : "400",
+                      }}
+                    >
+                      <img
+                        src={flag}
+                        alt={label}
+                        style={{ width: 22, height: 15, objectFit: "cover", borderRadius: 2 }}
+                      />
+                      <span style={{ fontSize: "0.88rem" }}>{label}</span>
+                      {idioma === code && (
+                        <span className="ms-auto" style={{ color: "#FFC300", fontSize: "0.8rem" }}>✓</span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
