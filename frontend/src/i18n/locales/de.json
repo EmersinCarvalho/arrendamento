@@ -109,7 +109,13 @@
     "recently_added": "Kürzlich hinzugefügt",
     "featured_properties": "Empfohlene Immobilien",
     "see_all": "Alle anzeigen",
-    "no_properties": "Keine Immobilien im Moment verfügbar."
+    "no_properties": "Keine Immobilien im Moment verfügbar.",
+    "cta_landlord_title": "Sie haben eine Immobilie zu vermieten?",
+    "cta_landlord_subtitle": "Veröffentlichen Sie kostenlos und erreichen Sie Tausende von Mietern.",
+    "cta_landlord_btn": "+ Immobilie jetzt inserieren",
+    "cta_tenant_title": "Nicht gefunden, was Sie suchen?",
+    "cta_tenant_subtitle": "Entdecken Sie alle verfügbaren Immobilien oder verfeinern Sie Ihre Suchfilter.",
+    "cta_tenant_btn": "Alle Immobilien anzeigen"
   },
   "login": {
     "welcome": "Willkommen bei",

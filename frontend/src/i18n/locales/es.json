@@ -109,7 +109,13 @@
     "recently_added": "Recién añadidos",
     "featured_properties": "Inmuebles destacados",
     "see_all": "Ver todos",
-    "no_properties": "No hay inmuebles disponibles por el momento."
+    "no_properties": "No hay inmuebles disponibles por el momento.",
+    "cta_landlord_title": "¿Tienes un inmueble para alquilar?",
+    "cta_landlord_subtitle": "Publica gratis y llega a miles de inquilinos.",
+    "cta_landlord_btn": "+ Publicar inmueble ahora",
+    "cta_tenant_title": "¿No encontraste lo que buscas?",
+    "cta_tenant_subtitle": "Explora todos los inmuebles disponibles o ajusta los filtros de búsqueda.",
+    "cta_tenant_btn": "Ver todos los inmuebles"
   },
   "login": {
     "welcome": "Bienvenido a",

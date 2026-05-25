@@ -109,7 +109,13 @@
     "recently_added": "Recently added",
     "featured_properties": "Featured properties",
     "see_all": "See all",
-    "no_properties": "No properties available at the moment."
+    "no_properties": "No properties available at the moment.",
+    "cta_landlord_title": "Have a property to rent?",
+    "cta_landlord_subtitle": "Publish for free and reach thousands of tenants.",
+    "cta_landlord_btn": "+ Publish property now",
+    "cta_tenant_title": "Didn't find what you're looking for?",
+    "cta_tenant_subtitle": "Explore all available properties or refine your search filters.",
+    "cta_tenant_btn": "View all properties"
   },
   "login": {
     "welcome": "Welcome to",

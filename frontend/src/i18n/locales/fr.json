@@ -109,7 +109,13 @@
     "recently_added": "Récemment ajoutés",
     "featured_properties": "Biens en vedette",
     "see_all": "Voir tout",
-    "no_properties": "Aucun bien disponible pour le moment."
+    "no_properties": "Aucun bien disponible pour le moment.",
+    "cta_landlord_title": "Vous avez un bien à louer ?",
+    "cta_landlord_subtitle": "Publiez gratuitement et atteignez des milliers de locataires.",
+    "cta_landlord_btn": "+ Publier un bien maintenant",
+    "cta_tenant_title": "Vous n'avez pas trouvé ce que vous cherchez ?",
+    "cta_tenant_subtitle": "Explorez tous les biens disponibles ou affinez vos filtres de recherche.",
+    "cta_tenant_btn": "Voir tous les biens"
   },
   "login": {
     "welcome": "Bienvenue sur",

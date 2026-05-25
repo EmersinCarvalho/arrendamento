@@ -285,17 +285,17 @@ export default function HomeLogado({ utilizador }) {
         <section style={{ background: "#FFC300", padding: "4rem 0" }}>
           <div className="container text-center">
             <h2 className="fw-bold mb-2" style={{ color: "#1a1a1a", fontSize: "2rem" }}>
-              Tem um imóvel para arrendar?
+              {t("home_logged.cta_landlord_title")}
             </h2>
             <p className="mb-4" style={{ color: "rgba(26,26,26,0.65)", fontSize: "1.05rem" }}>
-              Publique gratuitamente e chegue a milhares de inquilinos.
+              {t("home_logged.cta_landlord_subtitle")}
             </p>
             <Link
               to="/imoveis/publicar"
               className="btn btn-lg fw-bold px-5"
               style={{ background: "#1a1a1a", color: "#FFC300", borderRadius: "10px" }}
             >
-              + Publicar imóvel agora
+              {t("home_logged.cta_landlord_btn")}
             </Link>
           </div>
         </section>
@@ -303,10 +303,10 @@ export default function HomeLogado({ utilizador }) {
         <section style={{ background: "#1a1a1a", padding: "4rem 0" }}>
           <div className="container text-center">
             <h2 className="fw-bold mb-2 text-white" style={{ fontSize: "2rem" }}>
-              Não encontrou o que procura?
+              {t("home_logged.cta_tenant_title")}
             </h2>
             <p className="mb-4" style={{ color: "rgba(255,255,255,0.55)", fontSize: "1.05rem" }}>
-              Explore todos os imóveis disponíveis ou afine os filtros de pesquisa.
+              {t("home_logged.cta_tenant_subtitle")}
             </p>
             <div className="d-flex flex-wrap justify-content-center gap-3">
               <Link
@@ -314,7 +314,7 @@ export default function HomeLogado({ utilizador }) {
                 className="btn btn-lg fw-bold px-5"
                 style={{ background: "#FFC300", color: "#1a1a1a", borderRadius: "10px" }}
               >
-                Ver todos os imóveis
+                {t("home_logged.cta_tenant_btn")}
               </Link>
             </div>
           </div>
