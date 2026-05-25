@@ -32,7 +32,11 @@
     "tenant_cvs": "Mieterprofile",
     "night_mode": "Zum Dunkelmodus wechseln",
     "day_mode": "Zum Hellmodus wechseln",
-    "select_language": "Sprache wählen"
+    "select_language": "Sprache wählen",
+    "role_landlord": "Vermieter",
+    "role_tenant": "Mieter",
+    "preferences": "Einstellungen",
+    "configure_search": "Ideale Suche konfigurieren"
   },
   "home": {
     "tag": "Immobilien-Vermietungsplattform",
@@ -228,5 +232,33 @@
     "available_title": "In ganz Europa verfügbar",
     "available_cities": "Lissabon · Porto · Madrid · Paris · London · Berlin · Amsterdam · Rom · Barcelona · und mehr...",
     "copyright": "Immobilien-Vermietungsplattform"
+  },
+  "perfil": {
+    "member_since": "Mitglied seit",
+    "account_type": "Kontotyp",
+    "account_type_desc": "Legt fest, wie Sie die Plattform nutzen. Sie können es jederzeit ändern.",
+    "tenant_label": "Mieter",
+    "tenant_sub": "Ich suche eine Wohnung zum Mieten oder Kaufen",
+    "landlord_label": "Vermieter",
+    "landlord_sub": "Ich habe Immobilien zum Vermieten oder Verkaufen",
+    "saving": "Wird gespeichert...",
+    "save_change": "Änderung speichern",
+    "profile_updated": "✅ Profil erfolgreich aktualisiert!",
+    "save_error": "Fehler beim Speichern. Bitte versuchen Sie es erneut.",
+    "search_prefs": "Sucheinstellungen",
+    "search_prefs_desc": "Stadt, Budget, Typ und Extras",
+    "edit": "Bearbeiten",
+    "discover": "Immobilien entdecken",
+    "discover_desc": "Entdecken Sie passende Immobilien für Sie",
+    "explore": "Entdecken",
+    "contact_info": "Kontaktinformationen",
+    "contact_info_desc": "Sichtbar in Ihrem öffentlichen Profil für andere Nutzer.",
+    "phone": "Telefon",
+    "about_me": "Über mich",
+    "about_placeholder": "Stellen Sie sich kurz potenziellen Mietern oder Vermietern vor...",
+    "save_contacts": "Kontakte speichern",
+    "contacts_updated": "✅ Kontakte aktualisiert!",
+    "account": "Konto",
+    "google_session": "Mit Google angemeldet."
   }
 }

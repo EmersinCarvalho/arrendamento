@@ -153,7 +153,7 @@ export default function Navbar() {
                     className="badge d-none d-lg-inline"
                     style={{ background: utilizador.perfil === "senhorio" ? "#FFC300" : "rgba(255,255,255,0.2)", color: utilizador.perfil === "senhorio" ? "#1a1a1a" : "#fff", fontSize: "0.65rem" }}
                   >
-                    {utilizador.perfil}
+                    {utilizador.perfil === "senhorio" ? t("nav.role_landlord") : t("nav.role_tenant")}
                   </span>
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" style={{ minWidth: 270, borderRadius: 16 }}>
@@ -171,7 +171,7 @@ export default function Navbar() {
                         <div className="fw-bold" style={{ fontSize: "0.92rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{utilizador.nome?.split(" ")[0]}</div>
                         <div className="text-muted" style={{ fontSize: "0.73rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{utilizador.email}</div>
                         <span className="badge mt-1" style={{ background: utilizador.perfil === "senhorio" ? "#FFC300" : "#1a1a1a", color: utilizador.perfil === "senhorio" ? "#1a1a1a" : "#fff", fontSize: "0.65rem" }}>
-                          {utilizador.perfil}
+                          {utilizador.perfil === "senhorio" ? t("nav.role_landlord") : t("nav.role_tenant")}
                         </span>
                       </div>
                     </div>
@@ -184,7 +184,7 @@ export default function Navbar() {
                     { to: "/favoritos", icon: "❤️", label: t("nav.favorites"), sub: t("nav.saved_properties"), color: "#ff4d6d" },
                     ...(utilizador.perfil === "inquilino" ? [
                       { to: "/curriculo", icon: "📄", label: t("nav.real_estate_cv"), sub: t("nav.my_cv"), color: "#2e7d32" },
-                      { to: "/perfil/procura", icon: "🔍", label: "Preferências", sub: "Configurar pesquisa ideal", color: "#7b61ff" },
+                      { to: "/perfil/procura", icon: "🔍", label: t("nav.preferences"), sub: t("nav.configure_search"), color: "#7b61ff" },
                     ] : []),
                     ...(utilizador.perfil === "senhorio" ? [
                       { to: "/meus-imoveis", icon: "🏠", label: t("nav.my_properties"), sub: t("nav.manage_listings"), color: "#2196f3" },

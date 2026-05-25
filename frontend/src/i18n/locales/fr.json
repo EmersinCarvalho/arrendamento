@@ -32,7 +32,11 @@
     "tenant_cvs": "Profils des locataires",
     "night_mode": "Passer en mode sombre",
     "day_mode": "Passer en mode clair",
-    "select_language": "Choisir la langue"
+    "select_language": "Choisir la langue",
+    "role_landlord": "Propriétaire",
+    "role_tenant": "Locataire",
+    "preferences": "Préférences",
+    "configure_search": "Configurer la recherche idéale"
   },
   "home": {
     "tag": "Plateforme de Location Immobilière",
@@ -228,5 +232,33 @@
     "available_title": "Disponible dans toute l'Europe",
     "available_cities": "Lisbonne · Porto · Madrid · Paris · Londres · Berlin · Amsterdam · Rome · Barcelone · et plus...",
     "copyright": "Plateforme de Location Immobilière"
+  },
+  "perfil": {
+    "member_since": "Membre depuis",
+    "account_type": "Type de compte",
+    "account_type_desc": "Définit comment vous utilisez la plateforme. Vous pouvez le modifier à tout moment.",
+    "tenant_label": "Locataire",
+    "tenant_sub": "Je cherche une maison à louer ou à acheter",
+    "landlord_label": "Propriétaire",
+    "landlord_sub": "J'ai des biens à louer ou à vendre",
+    "saving": "Enregistrement...",
+    "save_change": "Enregistrer la modification",
+    "profile_updated": "✅ Profil mis à jour avec succès !",
+    "save_error": "Erreur lors de l'enregistrement. Veuillez réessayer.",
+    "search_prefs": "Préférences de recherche",
+    "search_prefs_desc": "Ville, budget, type et extras",
+    "edit": "Modifier",
+    "discover": "Découvrir des biens",
+    "discover_desc": "Explorez les biens compatibles avec vous",
+    "explore": "Explorer",
+    "contact_info": "Informations de contact",
+    "contact_info_desc": "Visibles sur votre profil public pour les autres utilisateurs.",
+    "phone": "Téléphone",
+    "about_me": "À propos de moi",
+    "about_placeholder": "Présentez-vous brièvement aux locataires ou propriétaires potentiels...",
+    "save_contacts": "Enregistrer les contacts",
+    "contacts_updated": "✅ Contacts mis à jour !",
+    "account": "Compte",
+    "google_session": "Connecté avec Google."
   }
 }

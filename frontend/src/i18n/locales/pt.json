@@ -32,7 +32,11 @@
     "tenant_cvs": "Perfis de inquilinos",
     "night_mode": "Mudar para modo noturno",
     "day_mode": "Mudar para modo claro",
-    "select_language": "Selecionar idioma"
+    "select_language": "Selecionar idioma",
+    "role_landlord": "Senhorio",
+    "role_tenant": "Inquilino",
+    "preferences": "Preferências",
+    "configure_search": "Configurar pesquisa ideal"
   },
   "home": {
     "tag": "Plataforma de Arrendamento Imobiliário",
@@ -228,5 +232,33 @@
     "available_title": "Disponível em toda a Europa",
     "available_cities": "Lisboa · Porto · Madrid · Paris · Londres · Berlim · Amesterdão · Roma · Barcelona · e mais...",
     "copyright": "Plataforma de Arrendamento Imobiliário"
+  },
+  "perfil": {
+    "member_since": "Membro desde",
+    "account_type": "Tipo de conta",
+    "account_type_desc": "Define como usa a plataforma. Pode alterar em qualquer altura.",
+    "tenant_label": "Inquilino",
+    "tenant_sub": "Procuro casa para arrendar ou comprar",
+    "landlord_label": "Senhorio",
+    "landlord_sub": "Tenho imóveis para arrendar ou vender",
+    "saving": "A guardar...",
+    "save_change": "Guardar alteração",
+    "profile_updated": "✅ Perfil atualizado com sucesso!",
+    "save_error": "Erro ao guardar. Tente novamente.",
+    "search_prefs": "Preferências de procura",
+    "search_prefs_desc": "Cidade, orçamento, tipologia e extras",
+    "edit": "Editar",
+    "discover": "Descobrir imóveis",
+    "discover_desc": "Explore imóveis compatíveis consigo",
+    "explore": "Explorar",
+    "contact_info": "Informações de contacto",
+    "contact_info_desc": "Visíveis no seu perfil público para outros utilizadores.",
+    "phone": "Telemóvel",
+    "about_me": "Sobre mim",
+    "about_placeholder": "Apresente-se brevemente aos potenciais inquilinos ou senhorios...",
+    "save_contacts": "Guardar contactos",
+    "contacts_updated": "✅ Contactos atualizados!",
+    "account": "Conta",
+    "google_session": "Sessão iniciada com Google."
   }
 }

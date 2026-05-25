@@ -32,7 +32,11 @@
     "tenant_cvs": "Profili degli inquilini",
     "night_mode": "Passa alla modalità scura",
     "day_mode": "Passa alla modalità chiara",
-    "select_language": "Seleziona lingua"
+    "select_language": "Seleziona lingua",
+    "role_landlord": "Proprietario",
+    "role_tenant": "Inquilino",
+    "preferences": "Preferenze",
+    "configure_search": "Configura ricerca ideale"
   },
   "home": {
     "tag": "Piattaforma di Affitto Immobiliare",
@@ -228,5 +232,33 @@
     "available_title": "Disponibile in tutta Europa",
     "available_cities": "Lisbona · Porto · Madrid · Parigi · Londra · Berlino · Amsterdam · Roma · Barcellona · e altro...",
     "copyright": "Piattaforma di Affitto Immobiliare"
+  },
+  "perfil": {
+    "member_since": "Membro dal",
+    "account_type": "Tipo di account",
+    "account_type_desc": "Definisce come usi la piattaforma. Puoi modificarlo in qualsiasi momento.",
+    "tenant_label": "Inquilino",
+    "tenant_sub": "Cerco una casa da affittare o acquistare",
+    "landlord_label": "Proprietario",
+    "landlord_sub": "Ho immobili da affittare o vendere",
+    "saving": "Salvataggio...",
+    "save_change": "Salva modifica",
+    "profile_updated": "✅ Profilo aggiornato con successo!",
+    "save_error": "Errore durante il salvataggio. Riprova.",
+    "search_prefs": "Preferenze di ricerca",
+    "search_prefs_desc": "Città, budget, tipo ed extra",
+    "edit": "Modifica",
+    "discover": "Scopri immobili",
+    "discover_desc": "Esplora immobili compatibili con te",
+    "explore": "Esplora",
+    "contact_info": "Informazioni di contatto",
+    "contact_info_desc": "Visibili nel tuo profilo pubblico per gli altri utenti.",
+    "phone": "Telefono",
+    "about_me": "Su di me",
+    "about_placeholder": "Presentati brevemente ai potenziali inquilini o proprietari...",
+    "save_contacts": "Salva contatti",
+    "contacts_updated": "✅ Contatti aggiornati!",
+    "account": "Account",
+    "google_session": "Accesso effettuato con Google."
   }
 }

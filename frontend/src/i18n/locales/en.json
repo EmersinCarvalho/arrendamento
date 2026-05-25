@@ -32,7 +32,11 @@
     "tenant_cvs": "Tenant profiles",
     "night_mode": "Switch to dark mode",
     "day_mode": "Switch to light mode",
-    "select_language": "Select language"
+    "select_language": "Select language",
+    "role_landlord": "Landlord",
+    "role_tenant": "Tenant",
+    "preferences": "Preferences",
+    "configure_search": "Configure ideal search"
   },
   "home": {
     "tag": "Property Rental Platform",
@@ -228,5 +232,33 @@
     "available_title": "Available across Europe",
     "available_cities": "Lisbon · Porto · Madrid · Paris · London · Berlin · Amsterdam · Rome · Barcelona · and more...",
     "copyright": "Property Rental Platform"
+  },
+  "perfil": {
+    "member_since": "Member since",
+    "account_type": "Account type",
+    "account_type_desc": "Defines how you use the platform. You can change it at any time.",
+    "tenant_label": "Tenant",
+    "tenant_sub": "I'm looking for a home to rent or buy",
+    "landlord_label": "Landlord",
+    "landlord_sub": "I have properties to rent or sell",
+    "saving": "Saving...",
+    "save_change": "Save change",
+    "profile_updated": "✅ Profile updated successfully!",
+    "save_error": "Error saving. Please try again.",
+    "search_prefs": "Search preferences",
+    "search_prefs_desc": "City, budget, type and extras",
+    "edit": "Edit",
+    "discover": "Discover properties",
+    "discover_desc": "Explore compatible properties for you",
+    "explore": "Explore",
+    "contact_info": "Contact information",
+    "contact_info_desc": "Visible on your public profile to other users.",
+    "phone": "Phone",
+    "about_me": "About me",
+    "about_placeholder": "Briefly introduce yourself to potential tenants or landlords...",
+    "save_contacts": "Save contacts",
+    "contacts_updated": "✅ Contacts updated!",
+    "account": "Account",
+    "google_session": "Signed in with Google."
   }
 }
