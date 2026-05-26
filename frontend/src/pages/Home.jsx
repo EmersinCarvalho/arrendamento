@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
+import SEO from "../components/SEO";
 import { getImoveis } from "../services/api";
 import { getUtilizador } from "../services/auth";
 import HomeLogado from "./HomeLogado";
@@ -56,8 +57,23 @@ export default function Home() {
     return <HomeLogado utilizador={utilizador} />;
   }
 
+  const jsonLdImoveis = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "ArrendaHouse",
+    "url": "https://arrendahouse.pt",
+    "description": "Plataforma europeia de arrendamento de imóveis. Encontra apartamentos e casas para arrendar em Portugal, Espanha, França, Alemanha, Itália e mais.",
+    "areaServed": "Europe",
+  };
+
   return (
     <>
+      <SEO
+        titulo="Arrendamento de Imóveis na Europa"
+        descricao="ArrendaHouse — Encontra apartamentos e casas para arrendar em toda a Europa. Candidata-te facilmente e fala diretamente com senhorios em Lisboa, Madrid, Paris, Berlim e mais."
+        url="https://arrendahouse.pt/"
+        jsonLd={jsonLdImoveis}
+      />
       {/* ── HERO ── */}
       <section className="hero-landing">
         <div className="container position-relative" style={{ zIndex: 1 }}>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import MapaImovel from "../components/MapaImovel";
+import SEO from "../components/SEO";
 import { useTema } from "../context/ThemeContext";
 import { getImovelById, getAvaliacoesAnunciante, getFavoritos, adicionarFavorito, removerFavorito, registarVisualizacao, verificarInteresse, enviarInteresse } from "../services/api";
 import { isAutenticado, getUtilizador } from "../services/auth";
@@ -305,8 +306,40 @@ export default function DetalheImovel() {
     imovel.estado || imovel.armarios_embutidos || imovel.orientacao || imovel.cozinha_equipada ||
     imovel.cozinha_mobilada || imovel.aquecimento || imovel.tipo_edificio || imovel.andar || imovel.certificado_energetico;
 
+  const jsonLdImovel = imovel ? {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "name": imovel.titulo,
+    "description": imovel.descricao || imovel.titulo,
+    "url": `https://arrendahouse.pt/imoveis/${id}`,
+    "image": Array.isArray(imovel.fotos) && imovel.fotos.length > 0 ? imovel.fotos[0] : imovel.foto,
+    "offers": {
+      "@type": "Offer",
+      "price": imovel.preco,
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": imovel.cidade,
+      "addressCountry": "PT",
+    },
+  } : null;
+
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
+      {imovel && (
+        <SEO
+          titulo={`${imovel.titulo} — ${imovel.cidade}`}
+          descricao={imovel.descricao
+            ? imovel.descricao.slice(0, 155) + (imovel.descricao.length > 155 ? "…" : "")
+            : `${imovel.titulo} em ${imovel.cidade} — ${Number(imovel.preco).toLocaleString("pt-PT")} €/mês. Vê detalhes e candidata-te no ArrendaHouse.`}
+          imagem={Array.isArray(imovel.fotos) && imovel.fotos.length > 0 ? imovel.fotos[0] : imovel.foto}
+          url={`https://arrendahouse.pt/imoveis/${id}`}
+          tipo="product"
+          jsonLd={jsonLdImovel}
+        />
+      )}
       <div className="container py-5">
         <Link to="/imoveis" className="btn btn-outline-secondary btn-sm mb-4">
           ← Voltar

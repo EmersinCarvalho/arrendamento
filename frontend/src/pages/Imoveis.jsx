@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useTema } from "../context/ThemeContext";
 import ImovelCard from "../components/ImovelCard";
 import Loading from "../components/Loading";
+import SEO from "../components/SEO";
 import { getImoveis, getFavoritos, adicionarFavorito, removerFavorito } from "../services/api";
 import { getUtilizador } from "../services/auth";
 import { getPerfilProcura } from "../services/procura";
@@ -113,8 +114,21 @@ export default function Imoveis() {
   const totalPaginas = Math.ceil(imoveisFiltrados.length / POR_PAGINA);
   const imoveisPagina = imoveisFiltrados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
 
+  const seoTitulo = cidadeEfetiva
+    ? `Arrendar em ${cidadeEfetiva}${tipologiaEfetiva ? ` — ${tipologiaEfetiva}` : ""}`
+    : `Imóveis para Arrendar na Europa${tipologiaEfetiva ? ` — ${tipologiaEfetiva}` : ""}`;
+
+  const seoDescricao = cidadeEfetiva
+    ? `Vê todos os apartamentos e casas disponíveis para arrendar em ${cidadeEfetiva}. Filtra por tipologia e preço no ArrendaHouse.`
+    : "Pesquisa imóveis para arrendar em toda a Europa. Filtra por cidade, tipologia e preço no ArrendaHouse.";
+
   return (
     <div className="container py-5">
+      <SEO
+        titulo={seoTitulo}
+        descricao={seoDescricao}
+        url={`https://arrendahouse.pt/imoveis${cidadeEfetiva ? `?cidade=${encodeURIComponent(cidadeEfetiva)}` : ""}`}
+      />
       <h2 className="fw-bold mb-1">{t("properties.title")}</h2>
       <p className="text-muted mb-4">
         {t("properties.found_other", { count: imoveisFiltrados.length })}

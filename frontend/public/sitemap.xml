@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://arrendahouse.pt/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Lisboa</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Porto</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Braga</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Coimbra</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Faro</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Cascais</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Espanha -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Madrid</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Barcelona</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Sevilha</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- França -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Paris</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Lyon</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Alemanha -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Berlim</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Munique</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Itália -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Roma</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Mil%C3%A3o</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Países Baixos -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Amesterd%C3%A3o</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Bélgica -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Bruxelas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Reino Unido -->
+  <url>
+    <loc>https://arrendahouse.pt/imoveis?cidade=Londres</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://arrendahouse.pt/login</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+</urlset>

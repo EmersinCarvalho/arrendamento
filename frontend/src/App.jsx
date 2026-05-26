@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -20,6 +21,7 @@ import CandidaturasRecebidas from "./pages/CandidaturasRecebidas";
 
 export default function App() {
   return (
+    <HelmetProvider>
     <ThemeProvider>
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
@@ -49,6 +51,7 @@ export default function App() {
       </div>
     </BrowserRouter>
     </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

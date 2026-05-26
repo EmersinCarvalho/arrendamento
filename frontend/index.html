@@ -5,7 +5,65 @@
     <meta name="referrer" content="no-referrer" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ArrendaHouse</title>
+    <title>ArrendaHouse — Arrendamento de Imóveis na Europa</title>
+
+    <!-- SEO Base -->
+    <meta name="description" content="ArrendaHouse é a plataforma europeia de arrendamento de imóveis. Encontra apartamentos e casas para arrendar em Portugal, Espanha, França, Alemanha, Itália e toda a Europa." />
+    <meta name="keywords" content="arrendamento, imóveis, apartamentos, casas, arrendar, Europa, Portugal, Espanha, França, Alemanha, Itália, habitação, renda, inquilino, senhorio, aluguel" />
+    <meta name="author" content="ArrendaHouse" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://arrendahouse.pt/" />
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ArrendaHouse" />
+    <meta property="og:title" content="ArrendaHouse — Arrendamento de Imóveis na Europa" />
+    <meta property="og:description" content="Encontra apartamentos e casas para arrendar em toda a Europa. Candidata-te facilmente e fala diretamente com senhorios." />
+    <meta property="og:url" content="https://arrendahouse.pt/" />
+    <meta property="og:image" content="https://arrendahouse.pt/og-image.png" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ArrendaHouse — Arrendamento de Imóveis na Europa" />
+    <meta name="twitter:description" content="Encontra apartamentos e casas para arrendar em toda a Europa." />
+    <meta name="twitter:image" content="https://arrendahouse.pt/og-image.png" />
+
+    <!-- JSON-LD: Organização -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ArrendaHouse",
+      "url": "https://arrendahouse.pt",
+      "logo": "https://arrendahouse.pt/favicon.png",
+      "description": "Plataforma europeia de arrendamento de imóveis",
+      "areaServed": "Europe",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "availableLanguage": ["Portuguese", "English", "Spanish", "French", "German", "Italian"]
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: Website com SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ArrendaHouse",
+      "url": "https://arrendahouse.pt",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://arrendahouse.pt/imoveis?pesquisa={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

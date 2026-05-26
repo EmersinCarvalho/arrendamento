@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Páginas privadas — sem indexação
+Disallow: /perfil
+Disallow: /perfil/setup
+Disallow: /perfil/procura
+Disallow: /candidaturas
+Disallow: /curriculo
+Disallow: /auth/callback
+Disallow: /favoritos
+Disallow: /meus-imoveis
+Disallow: /imoveis/publicar
+Disallow: /editar-imovel/
+
+Sitemap: https://arrendahouse.pt/sitemap.xml
